@@ -1,0 +1,16 @@
+{
+  "title": "Welcome to react using react-i18next",
+  "description": {
+    "part1": "To get started, edit <1>src/App.js</1> and save to reload.",
+    "infoLanguage": "This language is used",
+    "changeRuLanguage": "Switch to Russian using the button.",
+    "changeEnLanguage": "Переключиться на английский язык нажав ету кнопку.",
+    "header": "React-chat",
+    "editedMessage": "Edited",
+    "addChannel": "Add channel",
+    "addDm": "new dm",
+    "search": "Search",
+    "dirrectMessageTitle": "Dirrect Messages",
+    "channelTitle": "Channels"
+  }
+}

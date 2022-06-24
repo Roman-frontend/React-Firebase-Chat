@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`InputUpdateMessages graphql mutation create message 1`] = `
+<input
+  aria-invalid="false"
+  class="MuiInput-input MuiInputBase-input css-1x51dt5-MuiInputBase-input-MuiInput-input"
+  data-testid="on-key-up-main-input"
+  id=":r0:"
+  type="text"
+  value="222"
+/>
+`;

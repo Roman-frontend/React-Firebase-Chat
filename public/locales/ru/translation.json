@@ -1,0 +1,16 @@
+{
+  "title": "Добро пожаловать до Реакт застосовуючи react-i18next",
+  "description": {
+    "part1": "Щоб почати, змініть <1>src/App.js</1> і збережіть до перезагрузки.",
+    "infoLanguage": "Данный язык используется",
+    "changeRuLanguage": "Switch to Russian using the button.",
+    "changeEnLanguage": "Переключиться на английский язык нажав ету кнопку.",
+    "header": "Реакт-чат",
+    "editedMessage": "Отредактировано",
+    "addChannel": "Добавить группу",
+    "addDm": "Добавить прямое сообщение",
+    "search": "Поиск",
+    "dirrectMessageTitle": "Прямые сообщения",
+    "channelTitle": "Группы"
+  }
+}
