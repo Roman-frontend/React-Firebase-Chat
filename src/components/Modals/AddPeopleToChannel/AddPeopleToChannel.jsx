@@ -1,14 +1,14 @@
 import React, { useRef, useEffect, useContext } from "react";
-import { useQuery, useReactiveVar } from "@apollo/client";
+// import { useQuery, useReactiveVar } from "@apollo/client";
 import { useTheme } from "@mui/material/styles";
 import { withStyles } from "@mui/styles";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
-import { SelectPeople } from "../SelectPeople/SelectPeople.jsx";
-import { AUTH, GET_USERS } from "../../../GraphQLApp/queryes";
-import { CHANNELS } from "../../SetsUser/SetsUserGraphQL/queryes";
-import { activeChatId } from "../../../GraphQLApp/reactiveVars";
-import { AppContext } from "../../../Context/AppContext";
+import { SelectPeople } from "../SelectPeople/SelectPeople";
+// import { AUTH, GET_USERS } from "../../../GraphQLApp/queryes";
+// import { CHANNELS } from "../../SetsUser/SetsUserGraphQL/queryes";
+// import { activeChatId } from "../../../GraphQLApp/reactiveVars";
+import { ChatContext } from "../../../Context/ChatContext";
 
 const styles = (theme) => ({
   titleRoot: {
@@ -18,24 +18,30 @@ const styles = (theme) => ({
 
 export const AddPeopleToChannel = withStyles(styles)((props) => {
   const { chatNameRef, isErrorInPopap, doneInvite, classes } = props;
-  const { modalAddPeopleIsOpen, setModalAddPeopleIsOpen } =
-    useContext(AppContext);
+  const {
+    allChannels,
+    allUsers,
+    activeChannelId,
+    modalAddPeopleIsOpen,
+    setModalAddPeopleIsOpen,
+    authId,
+  } = useContext(ChatContext);
   const theme = useTheme();
-  const { data: auth } = useQuery(AUTH);
-  const { data: dChannels } = useQuery(CHANNELS);
-  const { data: allUsers } = useQuery(GET_USERS);
+  // const { data: auth } = useQuery(AUTH);
+  // const { data: dChannels } = useQuery(CHANNELS);
+  // const { data: allUsers } = useQuery(GET_USERS);
+  // const activeChannelId = useReactiveVar(activeChatId).activeChannelId;
   const notInvitedRef = useRef();
-  const activeChannelId = useReactiveVar(activeChatId).activeChannelId;
 
   useEffect(() => {
-    if (allUsers && allUsers.users && auth && auth.id) {
-      let allNotInvited = allUsers.users.filter((user) => user.id !== auth.id);
-      if (activeChannelId && dChannels?.userChannels?.length) {
-        dChannels.userChannels.forEach((channel) => {
-          if (channel && channel.id === activeChannelId) {
+    if (allUsers && authId) {
+      let allNotInvited = allUsers.filter((user) => user.uid !== authId);
+      if (activeChannelId && allChannels) {
+        allChannels.forEach((channel) => {
+          if (channel?.uid === activeChannelId) {
             channel.members.forEach((memberId) => {
               allNotInvited = allNotInvited.filter((user) => {
-                return user.id !== memberId;
+                return user.uid !== memberId;
               });
             });
           }
@@ -44,7 +50,7 @@ export const AddPeopleToChannel = withStyles(styles)((props) => {
       notInvitedRef.current = allNotInvited;
       //notInvitedRef.current = allUsers.users;
     }
-  }, [allUsers, dChannels, auth, activeChannelId]);
+  }, [allUsers, allChannels, authId, activeChannelId]);
 
   const closePopap = () => {
     setModalAddPeopleIsOpen(false);

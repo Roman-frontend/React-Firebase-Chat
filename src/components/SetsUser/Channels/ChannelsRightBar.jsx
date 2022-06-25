@@ -1,5 +1,5 @@
-import React, { useMemo } from "react";
-import { useQuery, useMutation, useReactiveVar } from "@apollo/client";
+import React, { useContext, useMemo } from "react";
+// import { useQuery, useMutation, useReactiveVar } from "@apollo/client";
 import { useSnackbar } from "notistack";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
@@ -9,55 +9,55 @@ import AssignmentIndSharpIcon from "@mui/icons-material/AssignmentIndSharp";
 import PersonIcon from "@mui/icons-material/Person";
 import GroupIcon from "@mui/icons-material/Group";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { CHANNELS, REMOVE_CHANNEL } from "../SetsUserGraphQL/queryes";
-import { activeChatId, reactiveVarId } from "../../../GraphQLApp/reactiveVars";
+import { ChatContext } from "../../../Context/ChatContext";
+// import { CHANNELS, REMOVE_CHANNEL } from "../SetsUserGraphQL/queryes";
+// import { activeChatId, reactiveVarId } from "../../../GraphQLApp/reactiveVars";
 
-const ChannelsRightBar = (props) => {
-  const { data: dChannels } = useQuery(CHANNELS);
-  const activeChannelId = useReactiveVar(activeChatId).activeChannelId;
-  const userId = useReactiveVar(reactiveVarId);
+const ChannelsRightBar = () => {
+  const { activeChannelId, allChannels, authId } = useContext(ChatContext);
+  // const { data: dChannels } = useQuery(CHANNELS);
+  // const activeChannelId = useReactiveVar(activeChatId).activeChannelId;
+  // const userId = useReactiveVar(reactiveVarId);
   const { enqueueSnackbar } = useSnackbar();
 
   const activeChannel = useMemo(() => {
-    if (activeChannelId && dChannels?.userChannels?.length) {
-      return dChannels.userChannels.find(
-        (channel) => channel !== null && channel.id === activeChannelId
-      );
+    if (activeChannelId && allChannels[0]) {
+      return allChannels.find((channel) => channel?.uid === activeChannelId);
     }
-  }, [activeChannelId, dChannels]);
+  }, [activeChannelId, allChannels]);
 
-  const [removeChannel] = useMutation(REMOVE_CHANNEL, {
-    update: (cache, { data: { channel } }) => {
-      cache.modify({
-        fields: {
-          userChannels(existingChannelRefs, { readField }) {
-            return existingChannelRefs.filter(
-              (channelRef) =>
-                channel.remove.recordId !== readField("id", channelRef)
-            );
-          },
-          messages({ DELETE }) {
-            return DELETE;
-          },
-        },
-      });
-    },
-    onError(error) {
-      console.log(`Помилка при видаленні повідомлення ${error}`);
-      enqueueSnackbar("Channel isn`t removed!", { variant: "error" });
-    },
-    onCompleted(data) {
-      enqueueSnackbar("Channel is a success removed!", {
-        variant: "success",
-      });
-      activeChatId({});
-    },
-  });
+  // const [removeChannel] = useMutation(REMOVE_CHANNEL, {
+  //   update: (cache, { data: { channel } }) => {
+  //     cache.modify({
+  //       fields: {
+  //         userChannels(existingChannelRefs, { readField }) {
+  //           return existingChannelRefs.filter(
+  //             (channelRef) =>
+  //               channel.remove.recordId !== readField("id", channelRef)
+  //           );
+  //         },
+  //         messages({ DELETE }) {
+  //           return DELETE;
+  //         },
+  //       },
+  //     });
+  //   },
+  //   onError(error) {
+  //     console.log(`Помилка при видаленні повідомлення ${error}`);
+  //     enqueueSnackbar("Channel isn`t removed!", { variant: "error" });
+  //   },
+  //   onCompleted(data) {
+  //     enqueueSnackbar("Channel is a success removed!", {
+  //       variant: "success",
+  //     });
+  //     activeChatId({});
+  //   },
+  // });
 
   function remove() {
     let name = "Leave channel";
 
-    if (activeChannel && activeChannel.admin === userId) {
+    if (activeChannel?.admin === authId) {
       name = "Remove channel";
     }
 
@@ -68,9 +68,9 @@ const ChannelsRightBar = (props) => {
         </ListItemIcon>
         <ListItemText
           primary={name}
-          onClick={() =>
-            removeChannel({ variables: { channelId: activeChannelId, userId } })
-          }
+          // onClick={() =>
+          //   removeChannel({ variables: { channelId: activeChannelId, authId } })
+          // }
         />
       </ListItem>
     );
@@ -87,9 +87,7 @@ const ChannelsRightBar = (props) => {
             }}
           />
         </ListItemIcon>
-        <ListItemText
-          primary={activeChannel ? activeChannel.name : "#general"}
-        />
+        <ListItemText primary={activeChannel?.name || "#general"} />
       </ListItem>
       {remove()}
     </List>

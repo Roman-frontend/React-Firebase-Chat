@@ -20,7 +20,7 @@ import {
 import { Loader } from "../../Helpers/Loader";
 import { IQueryMessage, IMapedMessage } from "../Models/IMessage";
 import IBadge from "../../../Models/IBadge";
-import { AppContext } from "../../../Context/AppContext";
+import { ChatContext } from "../../../Context/ChatContext";
 
 type TBadges = IBadge[] | [];
 
@@ -46,7 +46,7 @@ export const Messages = memo(
     const activeDirectMessageId =
       useReactiveVar(activeChatId).activeDirectMessageId;
     const userDmIds = useReactiveVar(reactiveDirectMessages);
-    const { newMsgsBadge, setNewMsgsBadge } = useContext(AppContext);
+    const { newMsgsBadge, setNewMsgsBadge } = useContext(ChatContext);
     const chatType = useMemo(() => {
       return activeDirectMessageId
         ? "DirectMessage"

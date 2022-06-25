@@ -8,7 +8,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import { AddPeopleToChannel } from "../../Modals/AddPeopleToChannel/AddPeopleToChannel";
 import { CreateListMembers } from "./CreateListMembers";
-import { AppContext } from "../../../Context/AppContext";
+import { ChatContext } from "../../../Context/ChatContext";
 
 export const ConversationMembers = (props) => {
   const {
@@ -19,7 +19,7 @@ export const ConversationMembers = (props) => {
     doneInvite,
     isErrorInPopap,
   } = props;
-  const { setModalAddPeopleIsOpen } = useContext(AppContext);
+  const { setModalAddPeopleIsOpen } = useContext(ChatContext);
   const theme = useTheme();
   const [search, setSearch] = useState("[A-Z]");
 

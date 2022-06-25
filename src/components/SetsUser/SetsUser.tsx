@@ -4,8 +4,8 @@ import Divider from "@mui/material/Divider";
 // import { CHANNELS, GET_DIRECT_MESSAGES } from "./SetsUserGraphQL/queryes";
 import { activeChatId } from "../../GraphQLApp/reactiveVars";
 import { Channels } from "./Channels/Channels";
-// import { DirectMessages } from "./DirectMessages/DirectMessages.jsx";
-import { AppContext } from "../../Context/AppContext";
+import { DirectMessages } from "./DirectMessages/DirectMessages";
+import { ChatContext } from "../../Context/ChatContext";
 
 interface IProps {
   isOpenLeftBar: boolean;
@@ -21,16 +21,13 @@ interface IStyles {
 export default function SetsUser(props: IProps) {
   const { isErrorInPopap, setIsErrorInPopap, isOpenLeftBar, setIsOpenLeftBar } =
     props;
-  const { activeChannelId, activeDirectMessageId, modalAddPeopleIsOpen } =
-    useContext(AppContext);
+  const { modalAddPeopleIsOpen, modalAddDmIsOpen, modalAddChannelIsOpen } =
+    useContext(ChatContext);
   // const { data: dChannels } = useQuery(CHANNELS);
   // const { data: dDms } = useQuery(GET_DIRECT_MESSAGES);
   // const activeChannelId = useReactiveVar(activeChatId).activeChannelId;
   // const activeDirectMessageId =
   //   useReactiveVar(activeChatId).activeDirectMessageId;
-  const [modalAddChannelIsOpen, setModalAddChannelIsOpen] =
-    useState<boolean>(false);
-  const [modalAddDmIsOpen, setModalAddDmIsOpen] = useState<boolean>(false);
   const prevActiveChatIdRef = useRef("");
 
   const styles: IStyles = {
@@ -102,19 +99,14 @@ export default function SetsUser(props: IProps) {
       <Divider />
       <Channels
         isOpenLeftBar={isOpenLeftBar}
-        modalAddChannelIsOpen={modalAddChannelIsOpen}
-        setModalAddChannelIsOpen={setModalAddChannelIsOpen}
         isErrorInPopap={isErrorInPopap}
         setIsErrorInPopap={setIsErrorInPopap}
       />
-      {/* <DirectMessages
+      <DirectMessages
         isOpenLeftBar={isOpenLeftBar}
-        setIsOpenLeftBar={setIsOpenLeftBar}
-        modalAddDmIsOpen={modalAddDmIsOpen}
-        setModalAddDmIsOpen={setModalAddDmIsOpen}
         isErrorInPopap={isErrorInPopap}
         setIsErrorInPopap={setIsErrorInPopap}
-      /> */}
+      />
     </div>
   );
 }

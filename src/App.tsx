@@ -23,23 +23,6 @@ export default function App() {
   const firestoreInstance = getFirestore(app);
   const auth = getAuth(app);
   const database = getDatabase(app);
-  const [activeChannelId, setActiveChannelId] = useState<null | string>(null);
-  const [activeDirectMessageId, setActiveDirectMessageId] = useState<
-    null | string
-  >(null);
-  const [newMsgsBadge, setNewMsgsBadge] = useState<[] | IBadge[]>([]);
-  const [modalAddPeopleIsOpen, setModalAddPeopleIsOpen] = useState(false);
-
-  const appContextValue: IAppContext = {
-    activeChannelId,
-    setActiveChannelId,
-    activeDirectMessageId,
-    setActiveDirectMessageId,
-    newMsgsBadge,
-    setNewMsgsBadge,
-    modalAddPeopleIsOpen,
-    setModalAddPeopleIsOpen,
-  };
 
   return (
     <FirestoreProvider sdk={firestoreInstance}>
@@ -48,7 +31,7 @@ export default function App() {
           <Router>
             {/* <ApolloProvider client={client}> */}
             <SnackbarProvider maxSnack={3}>
-              <AppContext.Provider value={appContextValue}>
+              <AppContext.Provider value={{}}>
                 <AppRoutes />
               </AppContext.Provider>
             </SnackbarProvider>

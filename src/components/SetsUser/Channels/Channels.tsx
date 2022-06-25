@@ -1,18 +1,5 @@
-import React, { useState, useEffect } from "react";
-import {
-  collection,
-  onSnapshot,
-  doc,
-  setDoc,
-  getDoc,
-  getDocs,
-  query,
-  addDoc,
-  serverTimestamp,
-  DocumentData,
-} from "firebase/firestore";
-import { getAuth } from "firebase/auth";
-import { useFirestore } from "reactfire";
+import React, { useState, useEffect, useContext } from "react";
+import { DocumentData } from "firebase/firestore";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "@mui/material/styles";
 import { makeStyles } from "@mui/styles";
@@ -29,11 +16,10 @@ import { AddChannel } from "../../Modals/AddChannel/AddChannel";
 import { Channel } from "./Channel";
 import { nanoid } from "nanoid";
 import IChannel from "../../Models/IChannel";
+import { ChatContext } from "../../../Context/ChatContext";
 
 interface IProps {
   isOpenLeftBar: boolean;
-  modalAddChannelIsOpen: boolean;
-  setModalAddChannelIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   isErrorInPopap: boolean;
   setIsErrorInPopap: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -54,47 +40,13 @@ const useStyles = makeStyles(() => ({
 }));
 
 export function Channels(props: IProps) {
-  const {
-    isOpenLeftBar,
-    modalAddChannelIsOpen,
-    setModalAddChannelIsOpen,
-    isErrorInPopap,
-    setIsErrorInPopap,
-  } = props;
+  const { isOpenLeftBar, isErrorInPopap, setIsErrorInPopap } = props;
   const { t } = useTranslation();
   const theme: TTheme = useTheme();
   const classes = useStyles();
+  const { allChannels, modalAddChannelIsOpen, setModalAddChannelIsOpen } =
+    useContext(ChatContext);
   const [open, setOpen] = useState(true);
-  const [allChannels, setAllChannels] = useState<DocumentData>([]);
-  const firestore = useFirestore();
-  const auth = getAuth();
-
-  useEffect(() => {
-    function unsubscribe() {
-      if (!modalAddChannelIsOpen) {
-        const channelsCol = collection(firestore, "channels");
-        const q = query(channelsCol);
-
-        onSnapshot(
-          q,
-          (snapshot) => {
-            const results: DocumentData[] = [];
-            snapshot.docs.forEach((snap) => {
-              results.push({ ...snap.data() });
-            });
-            if (Array.isArray(results)) {
-              setAllChannels(results);
-            }
-          },
-          (error) => {
-            console.log("error in snapshot... ", error);
-          }
-        );
-      }
-    }
-
-    return unsubscribe();
-  }, [firestore, modalAddChannelIsOpen, auth]);
 
   return (
     <>
@@ -128,10 +80,10 @@ export function Channels(props: IProps) {
               </ListItemIcon>
             </ListItem>
           )}
-          {allChannels ? (
+          {Array.isArray(allChannels) ? (
             <Collapse in={open} timeout="auto" unmountOnExit>
               <List>
-                {allChannels.map((channel: IChannel) =>
+                {allChannels.map((channel: DocumentData) =>
                   channel ? (
                     <React.Fragment key={channel.uid}>
                       <Channel

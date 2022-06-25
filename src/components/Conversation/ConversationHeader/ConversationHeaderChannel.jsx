@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useRef, useEffect, useContext } from "react";
 import { useSnackbar } from "notistack";
-import { useMutation, useQuery, useReactiveVar } from "@apollo/client";
+// import { useMutation, useQuery, useReactiveVar } from "@apollo/client";
 import { useTheme } from "@mui/material/styles";
 import Grid from "@mui/material/Grid";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
@@ -9,58 +9,61 @@ import { Box } from "@mui/system";
 import { Members } from "./Members";
 import { ConversationMembers } from "../../Modals/ConversationHeader/ConversationMembers";
 import { AddPeopleToChannel } from "../../Modals/AddPeopleToChannel/AddPeopleToChannel";
-import {
-  CHANNELS,
-  ADD_MEMBER_CHANNEL,
-} from "../../SetsUser/SetsUserGraphQL/queryes";
-import { activeChatId } from "../../../GraphQLApp/reactiveVars";
+// import {
+//   CHANNELS,
+//   ADD_MEMBER_CHANNEL,
+// } from "../../SetsUser/SetsUserGraphQL/queryes";
+// import { activeChatId } from "../../../GraphQLApp/reactiveVars";
 import ChannelsRightBar from "../../SetsUser/Channels/ChannelsRightBar";
-import { AppContext } from "../../../Context/AppContext";
+import { ChatContext } from "../../../Context/ChatContext";
 
 export const ConversationHeaderChannel = (props) => {
   const { isErrorInPopap, setIsErrorInPopap } = props;
-  const { setModalAddPeopleIsOpen } = useContext(AppContext);
+  const {
+    setModalAddPeopleIsOpen,
+    allChannels,
+    activeChannelId,
+    activeDirectMessageId,
+  } = useContext(ChatContext);
   const theme = useTheme();
-  const { data: dChannels } = useQuery(CHANNELS);
+  // const { data: dChannels } = useQuery(CHANNELS);
   const { enqueueSnackbar } = useSnackbar();
   const [modalIsShowsMembers, setModalIsShowsMembers] = useState(false);
   const [isOpenRightBarChannels, setIsOpenRightBarChannels] = useState(false);
   const chatNameRef = useRef("#general");
-  const activeChannelId = useReactiveVar(activeChatId).activeChannelId;
+  // const activeChannelId = useReactiveVar(activeChatId).activeChannelId;
 
-  const [addMemberToChannel] = useMutation(ADD_MEMBER_CHANNEL, {
-    update: (cache, { data: { channel } }) => {
-      if (dChannels?.userChannels?.length) {
-        const channelsWithChannelHasMember = dChannels.userChannels.map(
-          (userChannel) => {
-            if (userChannel && userChannel.id === channel.addMember.id) {
-              return { ...userChannel, members: channel.addMember.members };
-            }
-            return userChannel;
-          }
-        );
-        cache.writeQuery({
-          query: CHANNELS,
-          data: { ...dChannels, userChannels: channelsWithChannelHasMember },
-        });
-      }
-    },
-    onCompleted(data) {
-      enqueueSnackbar("User successfully added", { variant: "success" });
-    },
-    onError(error) {
-      console.log(`Помилка при додаванні учасника ${error}`);
-      enqueueSnackbar("User isn`t added", { variant: "error" });
-    },
-  });
+  // const [addMemberToChannel] = useMutation(ADD_MEMBER_CHANNEL, {
+  //   update: (cache, { data: { channel } }) => {
+  //     if (dChannels?.userChannels?.length) {
+  //       const channelsWithChannelHasMember = dChannels.userChannels.map(
+  //         (userChannel) => {
+  //           if (userChannel && userChannel.id === channel.addMember.id) {
+  //             return { ...userChannel, members: channel.addMember.members };
+  //           }
+  //           return userChannel;
+  //         }
+  //       );
+  //       cache.writeQuery({
+  //         query: CHANNELS,
+  //         data: { ...dChannels, userChannels: channelsWithChannelHasMember },
+  //       });
+  //     }
+  //   },
+  //   onCompleted(data) {
+  //     enqueueSnackbar("User successfully added", { variant: "success" });
+  //   },
+  //   onError(error) {
+  //     console.log(`Помилка при додаванні учасника ${error}`);
+  //     enqueueSnackbar("User isn`t added", { variant: "error" });
+  //   },
+  // });
 
   const activeChannel = useMemo(() => {
-    if (activeChannelId && dChannels?.userChannels?.length) {
-      return dChannels.userChannels.find(
-        (channel) => channel !== null && channel.id === activeChannelId
-      );
+    if (activeChannelId && allChannels) {
+      return allChannels.find((channel) => channel?.uid === activeChannelId);
     }
-  }, [activeChannelId, dChannels]);
+  }, [activeChannelId, allChannels]);
 
   useEffect(() => {
     if (activeChannel) {
@@ -70,7 +73,7 @@ export const ConversationHeaderChannel = (props) => {
 
   function doneInvite(action, invited = []) {
     if (action === "done" && invited[0]) {
-      addMemberToChannel({ variables: { invited, chatId: activeChannelId } });
+      // addMemberToChannel({ variables: { invited, chatId: activeChannelId } });
       setModalAddPeopleIsOpen(false);
     } else {
       setIsErrorInPopap(true);

@@ -1,15 +1,17 @@
-import React from "react";
-import { useReactiveVar } from "@apollo/client";
+import React, { useContext } from "react";
+// import { useReactiveVar } from "@apollo/client";
 import { useTheme } from "@mui/material/styles";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import Avatar from "@mui/material/Avatar";
-import { activeChatId } from "../../../GraphQLApp/reactiveVars";
+// import { activeChatId } from "../../../GraphQLApp/reactiveVars";
 import IChannel from "../../Models/IChannel";
+import { DocumentData } from "firebase/firestore";
+import { ChatContext } from "../../../Context/ChatContext";
 
 interface IProps {
   isOpenLeftBar: boolean;
-  channel: IChannel;
+  channel: DocumentData;
 }
 
 type TTheme = {
@@ -25,7 +27,8 @@ type TTheme = {
 
 export const Channel = (props: IProps) => {
   const { channel, isOpenLeftBar } = props;
-  const activeChannelId = useReactiveVar(activeChatId).activeChannelId;
+  const { activeChannelId, setActiveChannelId, setActiveDirectMessageId } =
+    useContext(ChatContext);
   const theme: TTheme = useTheme();
 
   if (
@@ -45,12 +48,10 @@ export const Channel = (props: IProps) => {
             },
           },
         }}
-        onClick={() =>
-          activeChatId({
-            activeChannelId: channel.uid,
-            activeDirectMessageId: "",
-          })
-        }
+        onClick={() => {
+          setActiveChannelId(channel.uid);
+          setActiveDirectMessageId(null);
+        }}
         selected={activeChannelId === channel.uid && true}
       >
         <>
@@ -58,7 +59,7 @@ export const Channel = (props: IProps) => {
           {isOpenLeftBar && (
             <ListItemText
               primary={channel.name}
-              style={{ textAlign: "center" }}
+              style={{ margin: "0px 4px 0px 15px" }}
             />
           )}
         </>

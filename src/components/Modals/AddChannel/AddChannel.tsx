@@ -42,7 +42,7 @@ interface IForm {
 const useStyles = makeStyles((theme) => ({
   dialogPaper: {
     minWidth: "520px",
-    minHeight: "425px",
+    minHeight: "380px",
     margin: 0,
   },
   input: {
@@ -110,7 +110,6 @@ export const AddChannel = (props: IProps) => {
               }
             });
             notInvitedRef.current = results;
-            console.log(results);
           },
           (error) => {
             console.log("error in snapshot... ", error);
@@ -127,26 +126,28 @@ export const AddChannel = (props: IProps) => {
   };
 
   const doneCreate = async (action: string, invited: string[] = []) => {
-    console.log(action, invited);
     if (
       action === "done" &&
       form.name.trim() !== "" &&
       auth?.currentUser?.uid
     ) {
+      const invitedContainAuthUid = invited.concat(auth.currentUser.uid);
       const channelsCol = collection(firestore, "channels");
       const channelUid = nanoid();
+
+      console.log(invitedContainAuthUid);
 
       await addDoc(channelsCol, {
         name: form.name,
         admin: auth.currentUser.uid,
         description: form.discription,
-        members: invited,
+        members: invitedContainAuthUid,
         isPrivate: form.isPrivate,
         uid: channelUid,
         createdAt: serverTimestamp(),
       });
 
-      invited.forEach(async (invitedUid) => {
+      invitedContainAuthUid.forEach(async (invitedUid) => {
         const docRef = doc(firebaseStore, `usersInfo`, invitedUid);
         const docSnap = await getDoc(docRef);
         const docSnapData: DocumentData | undefined = docSnap.data();
@@ -195,7 +196,7 @@ export const AddChannel = (props: IProps) => {
         }}
       >
         <DialogTitle>Create a channel</DialogTitle>
-        <DialogContent>
+        <DialogContent style={{ padding: "0px 24px 46px 24px" }}>
           <DialogContentText color="inherit">
             Channels are where your team communicates. They’re best when
             organized around a topic — #marketing, for example.
@@ -233,7 +234,6 @@ export const AddChannel = (props: IProps) => {
             onChange={changeHandler}
           />
           <SelectPeople
-            authUid={auth.currentUser?.uid}
             isDialogChanged={true}
             closePopap={closePopap}
             notInvitedRef={notInvitedRef.current}
