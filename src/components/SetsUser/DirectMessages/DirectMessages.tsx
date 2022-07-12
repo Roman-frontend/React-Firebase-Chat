@@ -2,17 +2,14 @@ import React, { useContext, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   collection,
-  onSnapshot,
   doc,
   setDoc,
   getDoc,
-  getDocs,
-  query,
+  updateDoc,
   addDoc,
   serverTimestamp,
   DocumentData,
 } from "firebase/firestore";
-import { getAuth } from "firebase/auth";
 import { useFirestore } from "reactfire";
 // import { gql, useQuery, useMutation, useReactiveVar } from "@apollo/client";
 import { useSnackbar } from "notistack";
@@ -58,7 +55,6 @@ const useStyles = makeStyles((theme) => ({
 export function DirectMessages(props: IProps) {
   const { isOpenLeftBar, isErrorInPopap, setIsErrorInPopap } = props;
   const firestore = useFirestore();
-  const auth = getAuth();
   const theme = useTheme();
   const { t } = useTranslation();
   // const { data: auth } = useQuery(AUTH);
@@ -66,7 +62,7 @@ export function DirectMessages(props: IProps) {
   const [open, setOpen] = useState(true);
   // const { data: dDms } = useQuery(GET_DIRECT_MESSAGES);
   const { enqueueSnackbar } = useSnackbar();
-  const { allDm, modalAddDmIsOpen, setModalAddDmIsOpen } =
+  const { allDm, modalAddDmIsOpen, setModalAddDmIsOpen, authId } =
     useContext(ChatContext);
   // const userId = useReactiveVar(reactiveVarId);
 
@@ -118,49 +114,61 @@ export function DirectMessages(props: IProps) {
   //   },
   // });
 
+  async function createDm(invitedUid: string) {
+    const dmCol = collection(firestore, "directMessages");
+    const newDM = await addDoc(dmCol, {
+      members: [invitedUid, authId],
+      createdAt: serverTimestamp(),
+    });
+
+    await updateDoc(newDM, {
+      uid: newDM.id,
+    });
+
+    return newDM.id;
+  }
+
+  async function addDmToInvitedUser(invitedUid: string, newDmId: string) {
+    const docRef = doc(firestore, `usersInfo`, invitedUid);
+    const docSnap = await getDoc(docRef);
+    const docSnapData: DocumentData | undefined = docSnap.data();
+
+    if (docSnapData) {
+      await updateDoc(docRef, {
+        directMessages: docSnapData.directMessages
+          ? [...docSnapData.directMessages, newDmId]
+          : [newDmId],
+      });
+    }
+  }
+
+  async function addDmToAuthUser(newDmId: string) {
+    if (authId) {
+      const authDocRef = doc(firestore, `usersInfo`, authId);
+      const authDocSnap = await getDoc(authDocRef);
+      const authDocSnapData: DocumentData | undefined = authDocSnap.data();
+
+      if (authDocSnapData) {
+        await updateDoc(authDocRef, {
+          directMessages: authDocSnapData.directMessages
+            ? [...authDocSnapData.directMessages, newDmId]
+            : [newDmId],
+        });
+      }
+    }
+  }
+
   async function doneInvite(
     action: string,
     invited: string[] = []
   ): Promise<void> {
-    if (action === "done" && invited && invited[0] && auth.currentUser?.uid) {
+    if (action === "done" && invited && invited[0] && authId) {
       console.log("done: ", invited);
-      const dmCol = collection(firestore, "directMessages");
 
-      invited.forEach(async (invitedUid) => {
-        const dmUid = nanoid();
-        await addDoc(dmCol, {
-          members: [invitedUid, auth.currentUser?.uid],
-          uid: dmUid,
-          createdAt: serverTimestamp(),
-        });
-
-        const docRef = doc(firestore, `usersInfo`, invitedUid);
-        const docSnap = await getDoc(docRef);
-        const docSnapData: DocumentData | undefined = docSnap.data();
-
-        if (docSnapData) {
-          await setDoc(docRef, {
-            ...docSnap.data(),
-            directMessages: docSnapData.directMessages
-              ? [...docSnapData.directMessages, dmUid]
-              : [dmUid],
-          });
-        }
-
-        if (auth.currentUser?.uid) {
-          const authDocRef = doc(firestore, `usersInfo`, auth.currentUser?.uid);
-          const authDocSnap = await getDoc(docRef);
-          const authDocSnapData: DocumentData | undefined = docSnap.data();
-
-          if (authDocSnapData) {
-            await setDoc(authDocRef, {
-              ...authDocSnap.data(),
-              directMessages: authDocSnapData.directMessages
-                ? [...authDocSnapData.directMessages, dmUid]
-                : [dmUid],
-            });
-          }
-        }
+      invited.forEach(async (invitedUid: string) => {
+        const newDmId = await createDm(invitedUid);
+        await addDmToInvitedUser(invitedUid, newDmId);
+        await addDmToAuthUser(newDmId);
       });
 
       enqueueSnackbar(`Direct message created`, { variant: "success" });
@@ -172,7 +180,6 @@ export function DirectMessages(props: IProps) {
 
   const createDMList = () => {
     if (allDm[0]) {
-      // console.log(dDms?.directMessages);
       return (
         <Collapse in={open} timeout="auto" unmountOnExit>
           <List>

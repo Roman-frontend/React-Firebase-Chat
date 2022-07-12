@@ -1,6 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, {
+  useEffect,
+  useState,
+  useContext,
+  Dispatch,
+  SetStateAction,
+  MutableRefObject,
+} from "react";
 import { nanoid } from "nanoid";
-import { useMutation, useReactiveVar } from "@apollo/client";
+// import { useMutation, useReactiveVar } from "@apollo/client";
 import { useTheme } from "@mui/material/styles";
 import { Box } from "@mui/system";
 import Button from "@mui/material/Button";
@@ -8,12 +15,25 @@ import ReplyIcon from "@mui/icons-material/Reply";
 import EditIcon from "@mui/icons-material/Edit";
 import ForwardIcon from "@mui/icons-material/Forward";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { REMOVE_MESSAGE } from "../ConversationGraphQL/queryes";
-import { reactiveVarId, activeChatId } from "../../../GraphQLApp/reactiveVars";
+import { ChatContext } from "../../../Context/ChatContext";
+// import { REMOVE_MESSAGE } from "../ConversationGraphQL/queryes";
+// import { reactiveVarId, activeChatId } from "../../../GraphQLApp/reactiveVars";
+import { IMapedMessage } from "../Models/IMessage";
+import { DocumentData } from "firebase/firestore";
+
+interface IProps {
+  inputRef: MutableRefObject<HTMLInputElement | null>;
+  openPopup: string;
+  setOpenPopup: Dispatch<SetStateAction<string>>;
+  setCloseBtnReplyMsg: Dispatch<SetStateAction<boolean>>;
+  setCloseBtnChangeMsg: Dispatch<SetStateAction<boolean>>;
+  popupMessage: null | IMapedMessage;
+  changeMessageRef: null | MutableRefObject<DocumentData | null>;
+}
 
 const stylesButton = { margin: 1 /* border: '1px solid rebeccapurple' */ };
 
-export function ConversationActionsMessage(props) {
+export function ConversationActionsMessage(props: IProps) {
   const {
     openPopup,
     setOpenPopup,
@@ -23,12 +43,14 @@ export function ConversationActionsMessage(props) {
     changeMessageRef,
     popupMessage,
   } = props;
+  const { authId, activeChannelId, activeDirectMessageId } =
+    useContext(ChatContext);
   const theme = useTheme();
-  const userId = useReactiveVar(reactiveVarId);
-  const activeChannelId = useReactiveVar(activeChatId).activeChannelId;
-  const activeDirectMessageId =
-    useReactiveVar(activeChatId).activeDirectMessageId;
-  const [focusRootInput, setFocusRootInput] = useState(false);
+  // const userId = useReactiveVar(reactiveVarId);
+  // const activeChannelId = useReactiveVar(activeChatId).activeChannelId;
+  // const activeDirectMessageId =
+  //   useReactiveVar(activeChatId).activeDirectMessageId;
+  const [focusRootInput, setFocusRootInput] = useState<string | null>(null);
 
   useEffect(() => {
     setOpenPopup("");
@@ -37,46 +59,52 @@ export function ConversationActionsMessage(props) {
   }, [activeChannelId, activeDirectMessageId]);
 
   useEffect(() => {
-    if (focusRootInput) {
-      inputRef.current.focus();
+    if (focusRootInput && inputRef?.current) {
+      inputRef?.current.focus();
     }
   }, [focusRootInput]);
 
-  const [removeMessage] = useMutation(REMOVE_MESSAGE, {
-    update: (cache) => {
-      cache.modify({
-        fields: {
-          messages({ DELETE }) {
-            return DELETE;
-          },
-        },
-      });
-    },
-    onError(error) {
-      console.log(`Помилка при видаленні повідомлення ${error}`);
-    },
-  });
+  // const [removeMessage] = useMutation(REMOVE_MESSAGE, {
+  //   update: (cache) => {
+  //     cache.modify({
+  //       fields: {
+  //         messages({ DELETE }) {
+  //           return DELETE;
+  //         },
+  //       },
+  //     });
+  //   },
+  //   onError(error) {
+  //     console.log(`Помилка при видаленні повідомлення ${error}`);
+  //   },
+  // });
 
   const handleAnswer = () => {
     setOpenPopup("");
     setCloseBtnReplyMsg(true);
     setFocusRootInput(nanoid());
-    inputRef.current.value = "";
+    if (inputRef?.current) {
+      inputRef.current.value = "";
+    }
   };
 
   const handleChange = () => {
     setCloseBtnChangeMsg(true);
     setOpenPopup("");
-    changeMessageRef.current = popupMessage;
+    if (changeMessageRef?.current && popupMessage) {
+      changeMessageRef.current = popupMessage;
+    }
     setFocusRootInput(nanoid());
-    inputRef.current.value = popupMessage.text;
+    if (inputRef?.current?.value && popupMessage?.text) {
+      inputRef.current.value = popupMessage?.text;
+    }
   };
 
   const handleDelete = () => {
     setOpenPopup("");
-    removeMessage({
-      variables: { id: popupMessage.id, chatType: popupMessage.chatType },
-    });
+    // removeMessage({
+    //   variables: { id: popupMessage.id, chatType: popupMessage.chatType },
+    // });
   };
 
   const handleCancel = () => {
@@ -89,7 +117,7 @@ export function ConversationActionsMessage(props) {
         background: theme.palette.primary.main,
         maxWidth: "initial",
       }}
-      style={{ display: !openPopup && "none" }}
+      style={{ display: openPopup ? "initial" : "none" }}
     >
       <Button
         sx={stylesButton}
@@ -101,7 +129,7 @@ export function ConversationActionsMessage(props) {
       >
         ANSWER
       </Button>
-      {popupMessage && popupMessage.senderId === userId && (
+      {popupMessage && popupMessage.senderId === authId && (
         <Button
           sx={stylesButton}
           size="small"
@@ -123,7 +151,7 @@ export function ConversationActionsMessage(props) {
       >
         FORWARD
       </Button>
-      {popupMessage && popupMessage.senderId === userId && (
+      {popupMessage && popupMessage.senderId === authId && (
         <Button
           sx={stylesButton}
           size="small"

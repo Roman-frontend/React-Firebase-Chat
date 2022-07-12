@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useRef, useEffect, useContext } from "react";
+import { useFirestore } from "reactfire";
 import { useSnackbar } from "notistack";
 // import { useMutation, useQuery, useReactiveVar } from "@apollo/client";
 import { useTheme } from "@mui/material/styles";
@@ -16,15 +17,27 @@ import { AddPeopleToChannel } from "../../Modals/AddPeopleToChannel/AddPeopleToC
 // import { activeChatId } from "../../../GraphQLApp/reactiveVars";
 import ChannelsRightBar from "../../SetsUser/Channels/ChannelsRightBar";
 import { ChatContext } from "../../../Context/ChatContext";
+import {
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc,
+  DocumentReference,
+  DocumentData,
+} from "firebase/firestore";
 
-export const ConversationHeaderChannel = (props) => {
-  const { isErrorInPopap, setIsErrorInPopap } = props;
-  const {
-    setModalAddPeopleIsOpen,
-    allChannels,
-    activeChannelId,
-    activeDirectMessageId,
-  } = useContext(ChatContext);
+interface IProps {
+  isErrorInPopap: boolean;
+  setIsErrorInPopap: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export const ConversationHeaderChannel = ({
+  isErrorInPopap,
+  setIsErrorInPopap,
+}: IProps) => {
+  const { setModalAddPeopleIsOpen, allChannels, activeChannelId } =
+    useContext(ChatContext);
+  const firestore = useFirestore();
   const theme = useTheme();
   // const { data: dChannels } = useQuery(CHANNELS);
   const { enqueueSnackbar } = useSnackbar();
@@ -71,16 +84,51 @@ export const ConversationHeaderChannel = (props) => {
     }
   }, [activeChannel]);
 
-  function doneInvite(action, invited = []) {
+  async function doneInvite(action: string, invited: string[] = []) {
     if (action === "done" && invited[0]) {
-      // addMemberToChannel({ variables: { invited, chatId: activeChannelId } });
+      await updateChannel(invited);
+
+      invited.forEach(async (invitedId: string) => {
+        await addChannelToInvitedUser(invitedId);
+      });
       setModalAddPeopleIsOpen(false);
     } else {
       setIsErrorInPopap(true);
     }
   }
 
-  const toggleDrawer = (open) => (event) => {
+  async function updateChannel(invited: string[]) {
+    const channelRef: DocumentReference<DocumentData> = doc(
+      firestore,
+      "channels",
+      activeChannel?.uid
+    );
+    await updateDoc(channelRef, {
+      members: activeChannel?.members.concat(invited),
+    });
+  }
+
+  async function addChannelToInvitedUser(invitedId: string) {
+    const userRef: DocumentReference<DocumentData> = doc(
+      firestore,
+      "usersInfo",
+      invitedId
+    );
+    const userSnap = await getDoc(userRef);
+
+    if (userSnap.exists() && invitedId && activeChannel?.uid) {
+      const userSnapData: DocumentData | undefined = userSnap.data();
+      console.log(userSnapData, invitedId);
+      const updatedChannels = userSnapData.channels.concat(activeChannel.uid);
+      console.log(updatedChannels);
+      await setDoc(userRef, {
+        ...userSnap.data(),
+        channels: updatedChannels,
+      });
+    }
+  }
+
+  const toggleDrawer = (open: boolean) => (event: any) => {
     if (
       event.type === "keydown" &&
       (event.key === "Tab" || event.key === "Shift")
@@ -96,8 +144,11 @@ export const ConversationHeaderChannel = (props) => {
       <Grid
         container
         spacing={1}
-        style={{ alignItems: "center", height: "4.3rem" }}
-        justify="space-between"
+        style={{
+          alignItems: "center",
+          height: "4.3rem",
+          justifyContent: "space-between",
+        }}
       >
         <Grid
           item
@@ -169,11 +220,11 @@ export const ConversationHeaderChannel = (props) => {
         doneInvite={doneInvite}
         isErrorInPopap={isErrorInPopap}
       />
-      <AddPeopleToChannel
+      {/* <AddPeopleToChannel
         chatNameRef={chatNameRef}
         doneInvite={doneInvite}
         isErrorInPopap={isErrorInPopap}
-      />
+      /> */}
     </div>
   );
 };

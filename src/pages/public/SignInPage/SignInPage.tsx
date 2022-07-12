@@ -60,7 +60,7 @@ export const SignInPage = () => {
 
   const formik = useFormik({
     initialValues: {
-      email: "r@gmail.com",
+      email: "p@gmail.com",
       password: "11111111",
     },
     validationSchema: validationSchema,

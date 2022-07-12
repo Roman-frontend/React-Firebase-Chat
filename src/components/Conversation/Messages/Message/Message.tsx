@@ -1,16 +1,23 @@
-import React, { memo, Dispatch, SetStateAction, useCallback } from "react";
-import { useQuery, useReactiveVar } from "@apollo/client";
+import React, {
+  memo,
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useContext,
+} from "react";
+// import { useQuery, useReactiveVar } from "@apollo/client";
 import { useTheme } from "@mui/material/styles";
 import { Box } from "@mui/material";
-import { reactiveVarId } from "../../../../GraphQLApp/reactiveVars";
-import { GET_USERS } from "../../../../GraphQLApp/queryes";
-import { Loader } from "../../../Helpers/Loader";
+// import { reactiveVarId } from "../../../../GraphQLApp/reactiveVars";
+// import { GET_USERS } from "../../../../GraphQLApp/queryes";
 import MessageHeader from "./MessageHeader";
 import MessageText from "./MessageText";
 import MessageReplyOn from "./MessageReplyOn";
 import { IMapedMessage } from "../../Models/IMessage";
 import "./reply-message.sass";
 import "./message.sass";
+import { ChatContext } from "../../../../Context/ChatContext";
+import { DocumentData } from "firebase/firestore";
 
 interface IProps {
   arrMsgs: IMapedMessage[];
@@ -39,9 +46,10 @@ const Message = memo(
     setCloseBtnChangeMsg,
     setCloseBtnReplyMsg,
   }: IProps) => {
+    const { authId, allUsers } = useContext(ChatContext);
     const theme = useTheme();
-    const authId = useReactiveVar(reactiveVarId);
-    const { data: users, loading } = useQuery(GET_USERS);
+    // const authId = useReactiveVar(reactiveVarId);
+    // const { data: users, loading } = useQuery(GET_USERS);
 
     console.log("message");
 
@@ -63,11 +71,11 @@ const Message = memo(
 
     const getSenderName = useCallback(
       (id: string): string => {
-        return users.users.find((user: IUser) => {
-          return user.id === id;
-        }).name;
+        return allUsers?.find((user: DocumentData) => {
+          return user?.uid === id;
+        })?.name;
       },
-      [users]
+      [allUsers]
     );
 
     const handleClick = (message: IMapedMessage) => {
@@ -88,7 +96,7 @@ const Message = memo(
         const replySenderName = m.replySenderId
           ? getSenderName(m.replySenderId)
           : senderName;
-        console.log(m);
+        console.log(authId === m.senderId, m, authId, m.senderId);
 
         return (
           <Box
@@ -151,8 +159,6 @@ const Message = memo(
         );
       });
     }
-
-    if (loading) return <Loader />;
 
     return <>{drawMessages()}</>;
   }

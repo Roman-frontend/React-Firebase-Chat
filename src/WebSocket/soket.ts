@@ -1,10 +1,10 @@
-import { IQueryMessage } from "../components/Conversation/Models/IMessage";
+import { DocumentData } from "firebase/firestore";
 
 interface IWsSend {
   meta: string;
   action?: string;
   room?: string;
-  message: IQueryMessage;
+  message: DocumentData;
   userRooms?: string[] | [];
   userId?: string;
   path?: string;

@@ -11,13 +11,20 @@ import { StyledBadge } from "./ConversationHeaderStyles";
 // } from '../../../GraphQLApp/reactiveVars';
 import { StyledBadgeWraper } from "../../Helpers/StyledBadge";
 import { ChatContext } from "../../../Context/ChatContext";
+import { DocumentData } from "firebase/firestore";
+import { nanoid } from "nanoid";
 
-export function Members(props) {
+interface IProps {
+  activeChannel: DocumentData | undefined;
+  setModalIsShowsMembers: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export function Members(props: IProps) {
   const { activeChannel, setModalIsShowsMembers } = props;
   const { activeChannelId, allUsers, allChannels } = useContext(ChatContext);
   // const { data: users } = useQuery(GET_USERS);
   // const { data: channels } = useQuery(CHANNELS);
-  const [iconMembers, setIconMembers] = useState([]);
+  const [iconMembers, setIconMembers] = useState<JSX.Element | null>(null);
   // const activeChannelId = useReactiveVar(activeChatId).activeChannelId;
   // const usersOnline = useReactiveVar(reactiveOnlineMembers);
 
@@ -33,8 +40,8 @@ export function Members(props) {
   ]);
 
   const createAvatars = () => {
-    let avatars = [];
-    activeChannel.members.forEach((memberId) => {
+    let avatars: JSX.Element[] = [];
+    activeChannel?.members.forEach((memberId: string) => {
       allUsers.forEach((user) => {
         if (user.uid === memberId /* && usersOnline */) {
           // const variantDot = usersOnline.includes(user.id) ? 'dot' : 'standard';
@@ -42,18 +49,18 @@ export function Members(props) {
           avatars = avatars.concat(
             <StyledBadgeWraper
               variant={variantDot}
-              key={user.uid}
+              key={nanoid()}
               name={user.name}
             />
           );
         }
       });
     });
-    const readyIcons = createAvatar(avatars);
+    const readyIcons: JSX.Element = createAvatar(avatars);
     setIconMembers(readyIcons);
   };
 
-  function createAvatar(avatars) {
+  function createAvatar(avatars: JSX.Element[]) {
     return (
       <AvatarGroup
         max={3}
@@ -65,5 +72,5 @@ export function Members(props) {
     );
   }
 
-  return iconMembers !== [] ? iconMembers : null;
+  return iconMembers;
 }

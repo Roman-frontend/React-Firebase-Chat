@@ -1,3 +1,5 @@
+import { DocumentData } from "firebase/firestore";
+
 export interface IQueryMessage {
   id: string;
   senderId: string;
@@ -11,6 +13,6 @@ export interface IQueryMessage {
   chatId: string;
 }
 
-export interface IMapedMessage extends IQueryMessage {
+export interface IMapedMessage extends DocumentData {
   hasHeader?: boolean;
 }

@@ -40,7 +40,7 @@ export const AddDirectMessage = withStyles(styles)((props: IProps) => {
     isErrorInPopap,
   } = props;
   const auth = getAuth();
-  const { allUsers, allDm } = useContext(ChatContext);
+  const { allUsers, allDm, authId } = useContext(ChatContext);
   const theme = useTheme();
 
   const closePopap = () => {
@@ -48,14 +48,12 @@ export const AddDirectMessage = withStyles(styles)((props: IProps) => {
   };
 
   const listNotInvited = useMemo(() => {
-    console.log(allUsers);
     if (allUsers[0]) {
-      let allNotInvited = allUsers.filter(
-        (user) => user.uid !== auth.currentUser?.uid
-      );
+      console.log(allUsers);
+      let allNotInvited = allUsers.filter((user) => user.uid !== authId);
       if (allDm[0]) {
-        allDm.forEach((directMessage) => {
-          directMessage.members.forEach((memberId: string) => {
+        allDm.forEach((dm) => {
+          dm.members.forEach((memberId: string) => {
             allNotInvited = allNotInvited.filter(
               (user) => user.uid !== memberId
             );

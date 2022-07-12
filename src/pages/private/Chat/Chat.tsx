@@ -5,8 +5,9 @@ import {
   query,
   DocumentData,
   getDocs,
+  where,
 } from "firebase/firestore";
-import { getAuth } from "firebase/auth";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useFirestore } from "reactfire";
 // import { useQuery, useReactiveVar } from "@apollo/client";
 import Box from "@mui/material/Box";
@@ -71,7 +72,12 @@ export const Chat = memo(() => {
   const [modalAddDmIsOpen, setModalAddDmIsOpen] = useState<boolean>(false);
   const theme = getTheme(themeName);
   const firestore = useFirestore();
+  const [authId, setAuthId] = useState<string | null>(null);
   const auth = getAuth();
+
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => user && setAuthId(user.uid));
+  }, [auth]);
 
   const setThemeName = useCallback((name: string): void => {
     localStorage.setItem("appTheme", name);
@@ -88,26 +94,76 @@ export const Chat = memo(() => {
   }, [theme]);
 
   useEffect(() => {
-    (async function () {
+    async function getUsers() {
       const usersInfoCol = collection(firestore, "usersInfo");
       const q = query(usersInfoCol);
       const snapshot = await getDocs(q);
-      console.log(snapshot);
       const results: DocumentData[] = snapshot.docs.map(
         (snap: DocumentData) => ({
           ...snap.data(),
         })
       );
+      console.log(results);
       setAllUsers(results);
-    })();
+    }
+
+    getUsers();
   }, []);
+
+  // onSnapshot with async await
+  // useEffect(() => {
+  //   let unsubscribe: any;
+
+  //   const allChannelsId = async () => {
+  //     if (authId) {
+  //       const userRef = doc(firestore, `usersInfo`, authId);
+  //       const userSnap = await getDoc(userRef);
+  //       const userChannels = userSnap.data()?.channels;
+  //       console.log(userChannels)
+
+  //       const channelsCol = collection(firestore, "channels");
+  //       const q = query(
+  //         channelsCol,
+  //         where("members", "array-contains", `${authId}`)
+  //       );
+
+  //       onSnapshot(
+  //         q,
+  //         (snapshot) => {
+  //           const results: DocumentData[] = [];
+  //           snapshot.docs.forEach((snap) => {
+  //             results.push({ ...snap.data() });
+  //           });
+  //           if (Array.isArray(results)) {
+  //             setAllChannels(results);
+  //           }
+  //         },
+  //         (error) => {
+  //           console.log("error in snapshot... ", error);
+  //         }
+  //       );
+  //     }
+  //   };
+
+  //   const getChatAndSubscribe = async () => {
+  //     unsubscribe = await allChannelsId();
+  //   };
+
+  //   getChatAndSubscribe();
+
+  //   return () => {
+  //     unsubscribe?.();
+  //   };
+  // }, [authId]);
 
   useEffect(() => {
     function unsubscribe() {
-      console.log(modalAddChannelIsOpen);
       if (!modalAddChannelIsOpen) {
         const channelsCol = collection(firestore, "channels");
-        const q = query(channelsCol);
+        const q = query(
+          channelsCol,
+          where("members", "array-contains", authId)
+        );
 
         onSnapshot(
           q,
@@ -128,13 +184,13 @@ export const Chat = memo(() => {
     }
 
     return unsubscribe();
-  }, [firestore, modalAddChannelIsOpen, auth]);
+  }, [firestore, modalAddChannelIsOpen, authId]);
 
   useEffect(() => {
     function unsubscribe() {
       if (!modalAddDmIsOpen) {
         const dMCol = collection(firestore, "directMessages");
-        const q = query(dMCol);
+        const q = query(dMCol, where("members", "array-contains", authId));
 
         onSnapshot(
           q,
@@ -155,7 +211,7 @@ export const Chat = memo(() => {
     }
 
     return unsubscribe();
-  }, [firestore, modalAddDmIsOpen, auth]);
+  }, [firestore, modalAddDmIsOpen, authId]);
 
   useEffect(() => {
     showConversation();
@@ -193,12 +249,12 @@ export const Chat = memo(() => {
     return null;
   }, [show]);
 
-  if (!allUsers || !auth) {
+  if (!allUsers || !authId) {
     return <Loader />;
   }
 
   const chatContextValue: IChatContext = {
-    authId: auth?.currentUser?.uid || null,
+    authId,
     allChannels,
     setAllChannels,
     allDm,

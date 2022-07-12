@@ -38,6 +38,7 @@ export const Channel = (props: IProps) => {
   ) {
     return (
       <ListItem
+        key={channel.uid}
         button
         sx={{
           "&.Mui-selected": {

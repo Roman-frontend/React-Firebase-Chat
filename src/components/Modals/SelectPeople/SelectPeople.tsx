@@ -102,7 +102,7 @@ export const SelectPeople = (props: IProps) => {
     addPeopleToInvited(selectedUser[0]);
   };
 
-  console.log(list);
+  console.log(list, notInvitedRef);
 
   return (
     <div style={styles.root}>

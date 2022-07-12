@@ -1,14 +1,13 @@
-import React, { memo } from "react";
-import { useReactiveVar } from "@apollo/client";
+import React, { memo, useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "@mui/material/styles";
 import { Box } from "@mui/material";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import DoneIcon from "@mui/icons-material/Done";
-import { reactiveVarId } from "../../../../GraphQLApp/reactiveVars";
 import { messageDate } from "../../../Helpers/Date/DateCreators";
 import "./reply-message.sass";
 import "./message.sass";
+import { ChatContext } from "../../../../Context/ChatContext";
 
 interface IProps {
   isOnceMsg?: boolean;
@@ -30,9 +29,9 @@ const MessageText = memo(
     className,
     status,
   }: IProps) => {
+    const { authId } = useContext(ChatContext);
     const theme = useTheme();
     const { t } = useTranslation();
-    const authId = useReactiveVar(reactiveVarId);
     const borderRadius = isOnceMsg
       ? "0px 10px 10px"
       : position === "header" && !isOnceMsg

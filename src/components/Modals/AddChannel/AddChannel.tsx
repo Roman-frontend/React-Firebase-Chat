@@ -9,6 +9,7 @@ import {
   getDocs,
   query,
   addDoc,
+  updateDoc,
   serverTimestamp,
   DocumentData,
 } from "firebase/firestore";
@@ -133,19 +134,23 @@ export const AddChannel = (props: IProps) => {
     ) {
       const invitedContainAuthUid = invited.concat(auth.currentUser.uid);
       const channelsCol = collection(firestore, "channels");
-      const channelUid = nanoid();
 
       console.log(invitedContainAuthUid);
 
-      await addDoc(channelsCol, {
+      const newChannel = await addDoc(channelsCol, {
         name: form.name,
         admin: auth.currentUser.uid,
         description: form.discription,
         members: invitedContainAuthUid,
         isPrivate: form.isPrivate,
-        uid: channelUid,
         createdAt: serverTimestamp(),
       });
+
+      await updateDoc(newChannel, {
+        uid: newChannel.id,
+      });
+
+      console.log(newChannel.id);
 
       invitedContainAuthUid.forEach(async (invitedUid) => {
         const docRef = doc(firebaseStore, `usersInfo`, invitedUid);
@@ -153,11 +158,14 @@ export const AddChannel = (props: IProps) => {
         const docSnapData: DocumentData | undefined = docSnap.data();
 
         if (docSnapData) {
+          const userChannels = docSnapData.channels
+            ? [...docSnapData.channels, newChannel.id]
+            : [newChannel.id];
+          console.log(docSnapData);
+
           await setDoc(docRef, {
             ...docSnap.data(),
-            channels: docSnapData.channels
-              ? [...docSnapData.channels, channelUid]
-              : [channelUid],
+            channels: userChannels,
           });
         }
       });
