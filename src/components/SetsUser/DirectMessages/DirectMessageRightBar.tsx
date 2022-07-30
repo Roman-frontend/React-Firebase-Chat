@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useContext } from "react";
 import {
+  collection,
   doc,
   setDoc,
   getDoc,
@@ -9,7 +10,6 @@ import {
   DocumentReference,
 } from "firebase/firestore";
 import { useFirestore } from "reactfire";
-// import { useQuery, useMutation, useReactiveVar } from "@apollo/client";
 // import { v4 } from "uuid";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
@@ -18,29 +18,11 @@ import ListItemText from "@mui/material/ListItemText";
 import AssignmentIndSharpIcon from "@mui/icons-material/AssignmentIndSharp";
 import PersonIcon from "@mui/icons-material/Person";
 import DeleteIcon from "@mui/icons-material/Delete";
-// import { AUTH, GET_USERS } from "../../../GraphQLApp/queryes";
-// import { SEND_TO_GMAIL } from "../SetsUserGraphQL/queryes";
-// import { wsSend } from "../../../WebSocket/soket";
-// import {
-//   GET_DIRECT_MESSAGES,
-//   REMOVE_DIRECT_MESSAGE,
-// } from "../SetsUserGraphQL/queryes";
-// import {
-//   activeChatId,
-//   reactiveVarId,
-//   reactiveDirectMessages,
-// } from "../../../GraphQLApp/reactiveVars";
 import { ChatContext } from "../../../Context/ChatContext";
 import { determineActiveChat } from "../../Helpers/determineActiveChat";
 import { useSnackbar } from "notistack";
 
 const DirectMessageRightBar = () => {
-  // const { data: auth } = useQuery(AUTH);
-  // const { data: users } = useQuery(GET_USERS);
-  // const { data: dDm } = useQuery(GET_DIRECT_MESSAGES);
-  // const activeDirectMessageId =
-  //   useReactiveVar(activeChatId).activeDirectMessageId;
-  // const userId = useReactiveVar(reactiveVarId);
   const { activeDirectMessageId, allDm, allUsers, authId } =
     useContext(ChatContext);
   const { enqueueSnackbar } = useSnackbar();
@@ -51,18 +33,6 @@ const DirectMessageRightBar = () => {
     subject: "Мій тестовий лист з React-Chat",
     text: "Текст листа з React-Chat",
   };
-
-  // const { refetch } = useQuery(SEND_TO_GMAIL, {
-  //   //Вимкнути автоматичний відправку
-  //   skip: stopSendGmail,
-
-  //   onError(error) {
-  //     console.log(`Помилка відправки повідомлення на gmail ${error}`);
-  //   },
-  //   onCompleted(data) {
-  //     console.log("Resolve after send to gmail...", data);
-  //   },
-  // });
 
   const activeDirectMessage = useMemo(() => {
     if (activeDirectMessageId && allDm?.length) {
@@ -77,51 +47,8 @@ const DirectMessageRightBar = () => {
     return "#generall";
   }, [activeDirectMessage]);
 
-  // const [removeDirectMessage] = useMutation(REMOVE_DIRECT_MESSAGE, {
-  //   update: (cache, { data: { directMessages } }) => {
-  //     cache.modify({
-  //       fields: {
-  //         directMessages(existingDirectMessagesRefs, { readField }) {
-  //           return existingDirectMessagesRefs.filter(
-  //             (directMessageRef) =>
-  //               directMessages.remove.recordId !==
-  //               readField("id", directMessageRef)
-  //           );
-  //         },
-  //         messages({ DELETE }) {
-  //           return DELETE;
-  //         },
-  //       },
-  //     });
-  //   },
-  //   onCompleted(data) {
-  //     const removedDm = data.directMessages.remove.record;
-  //     const removedUserId = removedDm.members.find((id) => id !== userId);
-  //     const storage = JSON.parse(sessionStorage.getItem("storageData"));
-  //     const newDrMsgIds = storage.directMessages.filter(
-  //       (dmId) => dmId !== removedDm.id
-  //     );
-  //     const toStorage = JSON.stringify({
-  //       ...storage,
-  //       directMessages: newDrMsgIds,
-  //     });
-  //     enqueueSnackbar("Direct Message is a success removed!", {
-  //       variant: "success",
-  //     });
-  //     activeChatId({});
-  //     sessionStorage.setItem("storageData", toStorage);
-  //     reactiveDirectMessages(newDrMsgIds);
-  //     wsSend({ meta: "removedDm", userId, dmId: removedDm.id, removedUserId });
-  //   },
-  //   onError(error) {
-  //     console.log(`Помилка при видаленні повідомлення ${error}`);
-  //     enqueueSnackbar("Direct Message isn`t removed!", { variant: "error" });
-  //   },
-  // });
-
   function gmailHandler() {
     setStopSendGmail(() => false);
-    // refetch({ ...mailOptions });
     setStopSendGmail(() => true);
   }
 
@@ -168,6 +95,15 @@ const DirectMessageRightBar = () => {
         `directMessages`,
         activeDirectMessageId
       );
+      // await client.firestore.delete(channelRef, {
+      //   project: process.env.GCP_PROJECT,
+      //   recursive: true,
+      //   yes: true,
+      // });
+
+      // const subCollectionDM = collection(firestore, `directMessages/${activeDirectMessageId}/messages`)
+
+      //   .doc("bsYNIwEkjP237Ela6fUp").collection("Messages");
       await deleteDoc(channelRef);
     }
   };

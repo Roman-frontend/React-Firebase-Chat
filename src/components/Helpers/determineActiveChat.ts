@@ -1,19 +1,5 @@
 import { DocumentData } from "firebase/firestore";
 
-// interface DirectMessage {
-//   members: string[];
-//   id: string;
-// }
-
-// interface User {
-//   id: string;
-//   name: string;
-//   email: string;
-//   password: string;
-//   channels: (string | undefined)[]; // Array<string> | Array<undefined>
-//   directMessages: (string | undefined)[];
-// }
-
 export function determineActiveChat(
   directMessage: DocumentData,
   users: DocumentData[],

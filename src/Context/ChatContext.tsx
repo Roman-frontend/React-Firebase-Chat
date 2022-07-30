@@ -15,8 +15,6 @@ export const ChatContext = createContext<IChatContext>({
   setActiveChannelId: noop,
   activeDirectMessageId: null,
   setActiveDirectMessageId: noop,
-  newMsgsBadge: [],
-  setNewMsgsBadge: noop,
   modalAddPeopleIsOpen: false,
   setModalAddPeopleIsOpen: noop,
   modalAddChannelIsOpen: false,

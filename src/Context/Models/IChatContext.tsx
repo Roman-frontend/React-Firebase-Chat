@@ -14,8 +14,6 @@ export interface IChatContext {
   setActiveChannelId: Dispatch<SetStateAction<null | string>>;
   activeDirectMessageId: null | string;
   setActiveDirectMessageId: Dispatch<SetStateAction<null | string>>;
-  newMsgsBadge: [] | IBadge[];
-  setNewMsgsBadge: Dispatch<SetStateAction<[] | IBadge[]>>;
   modalAddPeopleIsOpen: boolean;
   setModalAddPeopleIsOpen: Dispatch<SetStateAction<boolean>>;
   modalAddChannelIsOpen: boolean;

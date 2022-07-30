@@ -133,6 +133,12 @@ export const AddChannel = (props: IProps) => {
       auth?.currentUser?.uid
     ) {
       const invitedContainAuthUid = invited.concat(auth.currentUser.uid);
+      const badge = invitedContainAuthUid.map((uid) => {
+        if (uid === auth?.currentUser?.uid) {
+          return { uid, badgeNewMessages: 0, isOpen: true };
+        }
+        return { uid, badgeNewMessages: 0, isOpen: false };
+      });
       const channelsCol = collection(firestore, "channels");
 
       console.log(invitedContainAuthUid);
@@ -142,6 +148,7 @@ export const AddChannel = (props: IProps) => {
         admin: auth.currentUser.uid,
         description: form.discription,
         members: invitedContainAuthUid,
+        badge,
         isPrivate: form.isPrivate,
         createdAt: serverTimestamp(),
       });

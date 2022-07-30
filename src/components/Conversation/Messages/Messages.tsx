@@ -10,36 +10,18 @@ import React, {
   SetStateAction,
 } from "react";
 import {
-  doc,
-  setDoc,
-  getDoc,
-  updateDoc,
-  deleteDoc,
   collection,
   query,
   onSnapshot,
-  where,
+  orderBy,
   DocumentData,
-  DocumentReference,
-  Query,
 } from "firebase/firestore";
 import { useFirestore } from "reactfire";
-// import { useQuery, useReactiveVar, useApolloClient } from "@apollo/client";
-// import { wsSingleton } from "../../../WebSocket/soket";
 import Message from "./Message/Message";
-// import { GET_MESSAGES } from "../ConversationGraphQL/queryes";
-// import { GET_DIRECT_MESSAGES } from "../../SetsUser/SetsUserGraphQL/queryes";
-// import {
-//   reactiveVarId,
-//   activeChatId,
-//   reactiveDirectMessages,
-// } from "../../../GraphQLApp/reactiveVars";
 import { Loader } from "../../Helpers/Loader";
 import { IMapedMessage } from "../Models/IMessage";
 import IBadge from "../../../Models/IBadge";
 import { ChatContext } from "../../../Context/ChatContext";
-
-type TBadges = IBadge[] | [];
 
 interface IProps {
   openPopup: string;
@@ -57,198 +39,32 @@ export const Messages = memo(
     setCloseBtnChangeMsg,
     setCloseBtnReplyMsg,
   }: IProps) => {
-    // const clientApp = useApolloClient();
-    // const userId = useReactiveVar(reactiveVarId);
-    // const activeChannelId = useReactiveVar(activeChatId).activeChannelId;
-    // const activeDirectMessageId =
-    //   useReactiveVar(activeChatId).activeDirectMessageId;
-    // const userDmIds = useReactiveVar(reactiveDirectMessages);
-    const {
-      newMsgsBadge,
-      setNewMsgsBadge,
-      activeChannelId,
-      activeDirectMessageId,
-      authId,
-    } = useContext(ChatContext);
+    const { activeChannelId, activeDirectMessageId } = useContext(ChatContext);
     const firestore = useFirestore();
     const [messages, setMessages] = useState<DocumentData[]>([]);
-    const chatType = useMemo(() => {
-      return activeDirectMessageId
-        ? "DirectMessage"
-        : activeChannelId
-        ? "Channel"
-        : null;
-    }, [activeChannelId, activeDirectMessageId]);
-
-    const chatId = useMemo(() => {
-      return activeDirectMessageId || activeChannelId || null;
-    }, [activeChannelId, activeDirectMessageId]);
-
-    const listenMessages = useCallback((q: Query) => {
-      onSnapshot(
-        q,
-        (snapshot) => {
-          const results: DocumentData[] = [];
-          snapshot.docs.forEach((snap) => {
-            results.push({ ...snap.data() });
-          });
-          if (Array.isArray(results)) {
-            setMessages(results);
-          }
-        },
-        (error) => {
-          console.log("error in snapshot... ", error);
-        }
-      );
-    }, []);
 
     useEffect(() => {
-      function unsubscribe() {
-        if (activeChannelId) {
-          const channelsCol = collection(firestore, "channelMessages");
-          const q = query(channelsCol, where("chatId", "==", activeChannelId));
-
-          listenMessages(q);
-        }
-      }
-
-      return unsubscribe();
-    }, [firestore, activeChannelId]);
-
-    useEffect(() => {
-      function unsubscribe() {
-        if (activeDirectMessageId) {
-          const channelsCol = collection(firestore, "dmMessages");
-          const q = query(
-            channelsCol,
-            where("chatId", "==", activeDirectMessageId)
-          );
-
-          listenMessages(q);
-        }
-      }
-
-      return unsubscribe();
-    }, [firestore, activeDirectMessageId]);
-
-    // const {
-    //   loading,
-    //   data: messages,
-    //   client,
-    // } = useQuery(GET_MESSAGES, {
-    //   // variables: {
-    //   //   chatId: "6288671cb24f6a89e861b98d",
-    //   //   chatType: "DirectMessage",
-    //   //   userId: "6288661c22cf8e8950762e14",
-    //   // },
-    //   variables: {
-    //     chatId,
-    //     chatType,
-    //     userId,
-    //   },
-    //   onError(data) {
-    //     console.log("error __", data);
-    //   },
-    // });
-
-    // const overwriteTheChat = (parsedRes: any) => {
-    //   console.log("overwriteTheChat");
-    //   const oldMsg = client.readQuery({
-    //     query: GET_MESSAGES,
-    //     variables: { chatId, chatType, userId },
-    //   });
-    //   const chatMessages = oldMsg?.messages?.chatMessages || [];
-    //   client.writeQuery({
-    //     query: GET_MESSAGES,
-    //     data: {
-    //       messages: {
-    //         ...oldMsg.messages,
-    //         chatMessages: [...chatMessages, parsedRes],
-    //       },
-    //     },
-    //   });
-    // };
-
-    const overwriteAChat = (parsedRes: any) => {
-      let isFirstNewMsgInChat;
-      if (newMsgsBadge[0]) {
-        isFirstNewMsgInChat = newMsgsBadge.find(
-          (chat) => chat.id === parsedRes.chatId
-        );
-      }
-      console.log(
-        "isFirstNewMsgInChat: ",
-        isFirstNewMsgInChat,
-        "newMsgsBadge: ",
-        newMsgsBadge
+      const activeChatId = activeChannelId
+        ? activeChannelId
+        : activeDirectMessageId;
+      const chatType = activeChannelId ? "channels" : "directMessages";
+      const q = query(
+        collection(firestore, `${chatType}/${activeChatId}/messages`),
+        orderBy("createdAt")
       );
-      const num: number = isFirstNewMsgInChat ? isFirstNewMsgInChat.num + 1 : 1;
-      const newChatHasNewMsgs: IBadge = { id: parsedRes.chatId, num };
-      const filteredChats: IBadge[] = newMsgsBadge.filter(
-        (chat) => chat.id !== parsedRes.chatId
-      );
-      setNewMsgsBadge((prev: TBadges) => [...filteredChats, newChatHasNewMsgs]);
-    };
+      const unsubscribe = onSnapshot(q, (snapshot) => {
+        const results: DocumentData[] = [];
+        snapshot.docs.forEach((snap) => {
+          results.push({ ...snap.data() });
+        });
+        if (Array.isArray(results)) {
+          console.log(results, activeChatId);
+          setMessages(results);
+        }
+      });
 
-    // const overwriteDMs = async (parsedRes: any) => {
-    //   const sessionStorageUnParse: string | null =
-    //     sessionStorage.getItem("storageData");
-    //   let storage;
-    //   if (sessionStorageUnParse) storage = JSON.parse(sessionStorageUnParse);
-    //   let toStorage;
-    //   let newDrMsgIds = [];
-    //   if (parsedRes.message === "added dm" && storage) {
-    //     toStorage = JSON.stringify({
-    //       ...storage,
-    //       directMessages: [...storage.directMessages, parsedRes.id],
-    //     });
-    //     newDrMsgIds = [...userDmIds, parsedRes.id];
-    //   } else if (parsedRes.message === "removed dm" && storage) {
-    //     newDrMsgIds = storage.directMessages.filter(
-    //       (dmId: string) => dmId !== parsedRes.id
-    //     );
-    //     toStorage = JSON.stringify({
-    //       ...storage,
-    //       directMessages: newDrMsgIds,
-    //     });
-    //   }
-    //   if (toStorage) sessionStorage.setItem("storageData", toStorage);
-    //   // reactiveDirectMessages(newDrMsgIds);
-    //   // await clientApp.query({
-    //   //   query: GET_DIRECT_MESSAGES,
-    //   //   variables: { id: [parsedRes.id] },
-    //   // });
-    // };
-
-    //Підписуємось на подію що спрацює при отриманні повідомлення
-    // wsSingleton.clientPromise
-    //   .then((wsClient: any) => {
-    //     wsClient.onmessage = (response: { data: string }) => {
-    //       const parsedRes = JSON.parse(response.data);
-    //       console.log("socket: ", parsedRes);
-    //       if (parsedRes?.text && parsedRes?.chatId === chatId) {
-    //         overwriteTheChat(parsedRes);
-    //       } else if (parsedRes?.text && parsedRes?.chatId !== chatId) {
-    //         overwriteAChat(parsedRes);
-    //       } else if (
-    //         parsedRes?.message === "added dm" ||
-    //         parsedRes?.message === "removed dm"
-    //       ) {
-    //         overwriteDMs(parsedRes);
-    //       }
-    //     };
-    //   })
-    //   .catch((error: string) => console.log(error));
-
-    // //Підписуємось на закриття події
-    // wsSingleton.onclose = (response) => {
-    //   const disconnectStatus = response.wasClean
-    //     ? "DISCONNECTED CLEAN"
-    //     : "DISCONNECTED BROKEN";
-    //   console.log(
-    //     `${disconnectStatus} with code ${response.code} reason ${response.reason}`
-    //   );
-    // };
+      return () => unsubscribe();
+    }, [firestore, activeChannelId, activeDirectMessageId]);
 
     const callback = (
       _id: string,

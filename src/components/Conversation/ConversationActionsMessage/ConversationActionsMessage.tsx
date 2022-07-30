@@ -6,6 +6,17 @@ import React, {
   SetStateAction,
   MutableRefObject,
 } from "react";
+import {
+  collection,
+  doc,
+  setDoc,
+  getDoc,
+  updateDoc,
+  deleteDoc,
+  DocumentData,
+  DocumentReference,
+} from "firebase/firestore";
+import { useFirestore } from "reactfire";
 import { nanoid } from "nanoid";
 // import { useMutation, useReactiveVar } from "@apollo/client";
 import { useTheme } from "@mui/material/styles";
@@ -19,7 +30,6 @@ import { ChatContext } from "../../../Context/ChatContext";
 // import { REMOVE_MESSAGE } from "../ConversationGraphQL/queryes";
 // import { reactiveVarId, activeChatId } from "../../../GraphQLApp/reactiveVars";
 import { IMapedMessage } from "../Models/IMessage";
-import { DocumentData } from "firebase/firestore";
 
 interface IProps {
   inputRef: MutableRefObject<HTMLInputElement | null>;
@@ -46,6 +56,7 @@ export function ConversationActionsMessage(props: IProps) {
   const { authId, activeChannelId, activeDirectMessageId } =
     useContext(ChatContext);
   const theme = useTheme();
+  const firestore = useFirestore();
   // const userId = useReactiveVar(reactiveVarId);
   // const activeChannelId = useReactiveVar(activeChatId).activeChannelId;
   // const activeDirectMessageId =
@@ -100,11 +111,25 @@ export function ConversationActionsMessage(props: IProps) {
     }
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     setOpenPopup("");
-    // removeMessage({
-    //   variables: { id: popupMessage.id, chatType: popupMessage.chatType },
-    // });
+    if (activeDirectMessageId) {
+      removeMessage(activeDirectMessageId);
+    } else if (activeChannelId) {
+      removeMessage(activeChannelId);
+    }
+  };
+
+  const removeMessage = async (chatId: string) => {
+    if (popupMessage?.chatType && popupMessage.id) {
+      const messageRef: DocumentReference<DocumentData> = doc(
+        firestore,
+        `${popupMessage.chatType}/${chatId}/messages`,
+        popupMessage.id
+      );
+
+      await deleteDoc(messageRef);
+    }
   };
 
   const handleCancel = () => {

@@ -55,6 +55,7 @@ export const SignUpPage = memo(() => {
         surname,
         email: user.email,
         uid: user.uid,
+        online: true,
         images: [],
       });
     }

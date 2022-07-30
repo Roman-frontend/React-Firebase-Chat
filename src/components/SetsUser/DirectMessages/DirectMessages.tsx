@@ -3,7 +3,6 @@ import { useTranslation } from "react-i18next";
 import {
   collection,
   doc,
-  setDoc,
   getDoc,
   updateDoc,
   addDoc,
@@ -11,7 +10,6 @@ import {
   DocumentData,
 } from "firebase/firestore";
 import { useFirestore } from "reactfire";
-// import { gql, useQuery, useMutation, useReactiveVar } from "@apollo/client";
 import { useSnackbar } from "notistack";
 import { useTheme } from "@mui/material/styles";
 import Button from "@mui/material/Button";
@@ -24,18 +22,8 @@ import Collapse from "@mui/material/Collapse";
 import EmojiPeopleIcon from "@mui/icons-material/EmojiPeople";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
-// import { AUTH } from "../../../GraphQLApp/queryes";
-// import {
-//   CREATE_DIRECT_MESSAGE,
-//   GET_DIRECT_MESSAGES,
-// } from "../../SetsUser/SetsUserGraphQL/queryes";
-// import {
-//   reactiveDirectMessages,
-//   reactiveVarId,
-// } from "../../../GraphQLApp/reactiveVars";
 import { AddDirectMessage } from "../../Modals/AddDirectMessage/AddDirectMessage";
 import { DirectMessage } from "./DirectMessage";
-// import { wsSend } from "../../../WebSocket/soket";
 import { nanoid } from "nanoid";
 import { ChatContext } from "../../../Context/ChatContext";
 
@@ -57,67 +45,20 @@ export function DirectMessages(props: IProps) {
   const firestore = useFirestore();
   const theme = useTheme();
   const { t } = useTranslation();
-  // const { data: auth } = useQuery(AUTH);
   const classes = useStyles();
   const [open, setOpen] = useState(true);
-  // const { data: dDms } = useQuery(GET_DIRECT_MESSAGES);
   const { enqueueSnackbar } = useSnackbar();
   const { allDm, modalAddDmIsOpen, setModalAddDmIsOpen, authId } =
     useContext(ChatContext);
-  // const userId = useReactiveVar(reactiveVarId);
-
-  // const [createDirectMessage] = useMutation(CREATE_DIRECT_MESSAGE, {
-  //   update(cache, { data: { directMessages } }) {
-  //     cache.modify({
-  //       fields: {
-  //         directMessages(existingDrMsg) {
-  //           const newCommentRef = directMessages.create.record.map(
-  //             (newDrMsg) => {
-  //               return cache.writeFragment({
-  //                 data: newDrMsg,
-  //                 fragment: gql`
-  //                   fragment NewDirectMessage on DirectMessage {
-  //                     id
-  //                     members
-  //                   }
-  //                 `,
-  //               });
-  //             }
-  //           );
-  //           return [...existingDrMsg, ...newCommentRef];
-  //         },
-  //       },
-  //     });
-  //   },
-  //   onError(error) {
-  //     console.log(`Помилка ${error}`);
-  //     enqueueSnackbar("Direct Message created!", { variant: "error" });
-  //   },
-  //   onCompleted(data) {
-  //     const storage = JSON.parse(sessionStorage.getItem("storageData"));
-  //     const newDrMsgIds = data.directMessages.create.record.map(({ id }) => id);
-  //     const toStorage = JSON.stringify({
-  //       ...storage,
-  //       directMessages: [...storage.directMessages, ...newDrMsgIds],
-  //     });
-  //     sessionStorage.setItem("storageData", toStorage);
-  //     reactiveDirectMessages([...reactiveDirectMessages(), ...newDrMsgIds]);
-  //     enqueueSnackbar("Direct Message created!", { variant: "success" });
-  //     const dms = data.directMessages.create.record;
-  //     dms.forEach((dm) => {
-  //       const invitedId = dm.members.find((memberId) => {
-  //         return memberId !== userId;
-  //       });
-  //       console.log(invitedId);
-  //       wsSend({ meta: "addedDm", userId, dmId: dm.id, invitedId });
-  //     });
-  //   },
-  // });
 
   async function createDm(invitedUid: string) {
     const dmCol = collection(firestore, "directMessages");
     const newDM = await addDoc(dmCol, {
-      members: [invitedUid, authId],
+      members: [authId, invitedUid],
+      badge: [
+        { isOpen: false, badgeNewMessages: 0, uid: invitedUid },
+        { isOpen: true, badgeNewMessages: 0, uid: authId },
+      ],
       createdAt: serverTimestamp(),
     });
 

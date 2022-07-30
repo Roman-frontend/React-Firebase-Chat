@@ -79,7 +79,7 @@
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
-    "firebase-tools": "^11.1.0",
+    "firebase-tools": "^11.3.0",
     "jest": "^28.1.0",
     "node-sass": "npm:sass@^1.49.7",
     "react-test-renderer": "^18.1.0"

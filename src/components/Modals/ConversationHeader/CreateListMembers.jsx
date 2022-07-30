@@ -7,31 +7,26 @@ import ListItemText from "@mui/material/ListItemText";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import { StyledBadge } from "../../Conversation/ConversationHeader/ConversationHeaderStyles";
 import { ChatContext } from "../../../Context/ChatContext";
-// import { useQuery, useReactiveVar } from '@apollo/client';
-// import { GET_USERS } from '../../../GraphQLApp/queryes';
-// import { reactiveOnlineMembers } from '../../../GraphQLApp/reactiveVars';
 
 export function CreateListMembers(props) {
   const { activeChannel, search, classes } = props;
   const { allUsers } = useContext(ChatContext);
   const [members, setMembers] = useState(null);
-  // const { data: allUsers } = useQuery(GET_USERS);
-  // const usersOnline = useReactiveVar(reactiveOnlineMembers);
 
   useEffect(() => {
     if (allUsers && activeChannel) {
       createListMembers();
     }
-  }, [/*usersOnline, */ activeChannel, allUsers, search]);
+  }, [activeChannel, allUsers, search]);
 
   const createListMembers = () => {
     const listMembers = getMembersActiveChannel();
     const readyList = (
       <List dense>
-        {listMembers.map(({ uid, email }) => {
+        {listMembers.map(({ uid, email, online }) => {
           return (
             <ListItem key={uid} button>
-              <ListItemAvatar>{createAvatar(uid)}</ListItemAvatar>
+              <ListItemAvatar>{createAvatar(online)}</ListItemAvatar>
               <ListItemText id={uid} primary={email} />
             </ListItem>
           );
@@ -53,7 +48,7 @@ export function CreateListMembers(props) {
     return [];
   }
 
-  function createAvatar(memberId) {
+  function createAvatar(online) {
     return (
       <StyledBadge
         overlap="circular"
@@ -61,8 +56,7 @@ export function CreateListMembers(props) {
           vertical: "bottom",
           horizontal: "right",
         }}
-        // variant={usersOnline.includes(memberId) ? 'dot' : 'standard'}
-        variant={"standard"}
+        variant={online ? "dot" : "standard"}
       >
         <Box>
           <PersonIcon

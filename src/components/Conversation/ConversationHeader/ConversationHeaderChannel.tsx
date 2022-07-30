@@ -10,11 +10,6 @@ import { Box } from "@mui/system";
 import { Members } from "./Members";
 import { ConversationMembers } from "../../Modals/ConversationHeader/ConversationMembers";
 import { AddPeopleToChannel } from "../../Modals/AddPeopleToChannel/AddPeopleToChannel";
-// import {
-//   CHANNELS,
-//   ADD_MEMBER_CHANNEL,
-// } from "../../SetsUser/SetsUserGraphQL/queryes";
-// import { activeChatId } from "../../../GraphQLApp/reactiveVars";
 import ChannelsRightBar from "../../SetsUser/Channels/ChannelsRightBar";
 import { ChatContext } from "../../../Context/ChatContext";
 import {
@@ -39,38 +34,10 @@ export const ConversationHeaderChannel = ({
     useContext(ChatContext);
   const firestore = useFirestore();
   const theme = useTheme();
-  // const { data: dChannels } = useQuery(CHANNELS);
   const { enqueueSnackbar } = useSnackbar();
   const [modalIsShowsMembers, setModalIsShowsMembers] = useState(false);
   const [isOpenRightBarChannels, setIsOpenRightBarChannels] = useState(false);
   const chatNameRef = useRef("#general");
-  // const activeChannelId = useReactiveVar(activeChatId).activeChannelId;
-
-  // const [addMemberToChannel] = useMutation(ADD_MEMBER_CHANNEL, {
-  //   update: (cache, { data: { channel } }) => {
-  //     if (dChannels?.userChannels?.length) {
-  //       const channelsWithChannelHasMember = dChannels.userChannels.map(
-  //         (userChannel) => {
-  //           if (userChannel && userChannel.id === channel.addMember.id) {
-  //             return { ...userChannel, members: channel.addMember.members };
-  //           }
-  //           return userChannel;
-  //         }
-  //       );
-  //       cache.writeQuery({
-  //         query: CHANNELS,
-  //         data: { ...dChannels, userChannels: channelsWithChannelHasMember },
-  //       });
-  //     }
-  //   },
-  //   onCompleted(data) {
-  //     enqueueSnackbar("User successfully added", { variant: "success" });
-  //   },
-  //   onError(error) {
-  //     console.log(`Помилка при додаванні учасника ${error}`);
-  //     enqueueSnackbar("User isn`t added", { variant: "error" });
-  //   },
-  // });
 
   const activeChannel = useMemo(() => {
     if (activeChannelId && allChannels) {

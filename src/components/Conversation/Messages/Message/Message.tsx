@@ -5,11 +5,8 @@ import React, {
   useCallback,
   useContext,
 } from "react";
-// import { useQuery, useReactiveVar } from "@apollo/client";
 import { useTheme } from "@mui/material/styles";
 import { Box } from "@mui/material";
-// import { reactiveVarId } from "../../../../GraphQLApp/reactiveVars";
-// import { GET_USERS } from "../../../../GraphQLApp/queryes";
 import MessageHeader from "./MessageHeader";
 import MessageText from "./MessageText";
 import MessageReplyOn from "./MessageReplyOn";
@@ -28,14 +25,14 @@ interface IProps {
   setCloseBtnReplyMsg: Dispatch<SetStateAction<boolean>>;
 }
 
-interface IUser {
-  id: string;
-  name: string;
-  email: string;
-  password: string;
-  channels: string[];
-  directMessages: string[];
-}
+// interface IUser {
+//   id: string;
+//   name: string;
+//   email: string;
+//   password: string;
+//   channels: string[];
+//   directMessages: string[];
+// }
 
 const Message = memo(
   ({
@@ -48,10 +45,6 @@ const Message = memo(
   }: IProps) => {
     const { authId, allUsers } = useContext(ChatContext);
     const theme = useTheme();
-    // const authId = useReactiveVar(reactiveVarId);
-    // const { data: users, loading } = useQuery(GET_USERS);
-
-    console.log("message");
 
     const getStyle = useCallback(
       (message: IMapedMessage): { root: React.CSSProperties } => {
@@ -96,7 +89,6 @@ const Message = memo(
         const replySenderName = m.replySenderId
           ? getSenderName(m.replySenderId)
           : senderName;
-        console.log(authId === m.senderId, m, authId, m.senderId);
 
         return (
           <Box

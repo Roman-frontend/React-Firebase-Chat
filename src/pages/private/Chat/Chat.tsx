@@ -4,35 +4,20 @@ import {
   onSnapshot,
   query,
   DocumentData,
-  getDocs,
+  doc,
   where,
+  updateDoc,
+  DocumentReference,
 } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useFirestore } from "reactfire";
-// import { useQuery, useReactiveVar } from "@apollo/client";
 import Box from "@mui/material/Box";
 import CssBaseline from "@mui/material/CssBaseline";
 import Grid from "@mui/material/Grid";
-// import {
-//   reactiveOnlineMembers,
-//   reactiveVarPrevAuth,
-// } from "../../../GraphQLApp/reactiveVars";
-// import { GET_USERS } from "../../../GraphQLApp/queryes";
 import Header from "../../../components/Header/Header";
 import Conversation from "../../../components/Conversation/Conversation";
 import SetsUser from "../../../components/SetsUser/SetsUser";
-// import {
-//   registerEnterPage,
-//   registerOnlineUser,
-//   registerUnloadPage,
-//   registerOfflineUser,
-// } from "../../../components/Helpers/registerUnload";
-// import {
-//   CHANNELS,
-//   GET_DIRECT_MESSAGES,
-// } from "../../../components/SetsUser/SetsUserGraphQL/queryes";
 import { Loader } from "../../../components/Helpers/Loader";
-// import { activeChatId } from "../../../GraphQLApp/reactiveVars";
 import setStylesChat from "./styles";
 import IStyles from "./Models/IStyles";
 import { CustomThemeContext } from "../../../Context/AppContext";
@@ -46,15 +31,6 @@ import { IChatContext } from "../../../Context/Models/IChatContext";
 export const Chat = memo(() => {
   const currentTheme = localStorage.getItem("appTheme") || "light";
   const [themeName, _setThemeName] = useState(currentTheme);
-  // const usersOnline = useReactiveVar(reactiveOnlineMembers);
-  // const activeChat = useReactiveVar(activeChatId);
-  // const activeChannelId = useReactiveVar(activeChatId).activeChannelId;
-  // const activeDirectMessageId =
-  //   useReactiveVar(activeChatId).activeDirectMessageId;
-  // const { loading: lUsers } = useQuery(GET_USERS);
-  // const { loading: lChannels, data: dChannels } = useQuery(CHANNELS);
-  // const { loading: lDms, data: dDms } = useQuery(GET_DIRECT_MESSAGES);
-  const [newMsgsBadge, setNewMsgsBadge] = useState<[] | IBadge[]>([]);
   const [activeChannelId, setActiveChannelId] = useState<null | string>(null);
   const [activeDirectMessageId, setActiveDirectMessageId] = useState<
     null | string
@@ -97,14 +73,21 @@ export const Chat = memo(() => {
     async function getUsers() {
       const usersInfoCol = collection(firestore, "usersInfo");
       const q = query(usersInfoCol);
-      const snapshot = await getDocs(q);
-      const results: DocumentData[] = snapshot.docs.map(
-        (snap: DocumentData) => ({
-          ...snap.data(),
-        })
+      onSnapshot(
+        q,
+        (snapshot) => {
+          const results: DocumentData[] = [];
+          snapshot.docs.forEach((snap) => {
+            results.push({ ...snap.data() });
+          });
+          if (Array.isArray(results)) {
+            setAllUsers(results);
+          }
+        },
+        (error) => {
+          console.log("error in snapshot... ", error);
+        }
       );
-      console.log(results);
-      setAllUsers(results);
     }
 
     getUsers();
@@ -225,16 +208,72 @@ export const Chat = memo(() => {
     }
   }, [activeChannelId, activeDirectMessageId, allChannels, allDm]);
 
-  // useEffect(() => {
-  //   const storage = sessionStorage.getItem("storageData");
-  //   if (storage) {
-  //     const parsedStorage = JSON.parse(storage);
-  //     reactiveVarPrevAuth(parsedStorage);
-  //   }
-  //   registerOnlineUser(usersOnline);
-  //   registerEnterPage();
-  //   return () => registerUnloadPage("Leaving page", registerOfflineUser);
-  // }, []);
+  useEffect(() => {
+    function unsubscribe() {
+      const activeChatId = activeChannelId
+        ? activeChannelId
+        : activeDirectMessageId;
+      const activeChatName = activeChannelId ? "channels" : "directMessages";
+      if (activeChatId && activeChatName) {
+        const chatRef: DocumentReference<DocumentData> = doc(
+          firestore,
+          activeChatName,
+          activeChatId
+        );
+
+        const chat = activeChannelId
+          ? allChannels.find((c) => c.uid === activeChatId)
+          : allDm.find((dm) => dm.uid === activeDirectMessageId);
+        let isUpdateDoc;
+        const chatWithNewBadge = chat?.badge.map(
+          (
+            b: { uid: string; isOpen: boolean; badgeNewMessages: number },
+            index: number
+          ) => {
+            if (b.uid === authId && b.isOpen) {
+              isUpdateDoc = index;
+              return { ...b, isOpen: false };
+            }
+
+            return b;
+          }
+        );
+        if (isUpdateDoc !== undefined) {
+          updateDoc(chatRef, { badge: chatWithNewBadge });
+        }
+      }
+    }
+
+    window.onbeforeunload = function () {
+      unsubscribe();
+    };
+
+    window.onunload = function () {
+      unsubscribe();
+    };
+  }, [firestore, activeChannelId, activeDirectMessageId]);
+
+  async function changeOnline(isOnline: boolean) {
+    console.log(authId);
+    if (authId) {
+      const userRef: DocumentReference<DocumentData> = doc(
+        firestore,
+        "usersInfo",
+        authId
+      );
+      await updateDoc(userRef, { online: isOnline });
+    }
+  }
+
+  useEffect(() => {
+    changeOnline(true);
+
+    function markAsOffline() {
+      changeOnline(false);
+    }
+
+    return () => markAsOffline();
+  }, [authId]);
 
   const showConversation = useCallback(() => {
     if (show) {
@@ -265,8 +304,6 @@ export const Chat = memo(() => {
     setActiveChannelId,
     activeDirectMessageId,
     setActiveDirectMessageId,
-    newMsgsBadge,
-    setNewMsgsBadge,
     modalAddPeopleIsOpen,
     setModalAddPeopleIsOpen,
     modalAddChannelIsOpen,
