@@ -15,7 +15,6 @@ import SupervisedUserCircleIcon from "@mui/icons-material/SupervisedUserCircle";
 import { AddChannel } from "../../Modals/AddChannel/AddChannel";
 import { Channel } from "./Channel";
 import { nanoid } from "nanoid";
-import IChannel from "../../Models/IChannel";
 import { ChatContext } from "../../../Context/ChatContext";
 
 interface IProps {

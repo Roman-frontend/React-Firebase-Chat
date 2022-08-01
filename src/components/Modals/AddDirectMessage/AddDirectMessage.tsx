@@ -1,19 +1,12 @@
 import React, { useContext, useMemo } from "react";
 import { getAuth } from "firebase/auth";
-// import { useQuery } from "@apollo/client";
 import { useTheme } from "@mui/material/styles";
 import { withStyles } from "@mui/styles";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
-// import { GET_USERS } from "../../../GraphQLApp/queryes";
 import { SelectPeople } from "../SelectPeople/SelectPeople";
 import { ChatContext } from "../../../Context/ChatContext";
 import { DialogContent } from "@mui/material";
-// import {
-//   reactiveVarName,
-//   reactiveVarId,
-// } from "../../../GraphQLApp/reactiveVars";
-// import { GET_DIRECT_MESSAGES } from "../../SetsUser/SetsUserGraphQL/queryes";
 
 interface IProps {
   done: (action: string, invited?: string[]) => Promise<void>;
@@ -30,8 +23,6 @@ const styles = (theme: any) => ({
 });
 
 export const AddDirectMessage = withStyles(styles)((props: IProps) => {
-  // const { data: dUsers } = useQuery(GET_USERS);
-  // const { data: dDms } = useQuery(GET_DIRECT_MESSAGES);
   const {
     done,
     classes,
@@ -49,7 +40,6 @@ export const AddDirectMessage = withStyles(styles)((props: IProps) => {
 
   const listNotInvited = useMemo(() => {
     if (allUsers[0]) {
-      console.log(allUsers);
       let allNotInvited = allUsers.filter((user) => user.uid !== authId);
       if (allDm[0]) {
         allDm.forEach((dm) => {
@@ -61,7 +51,6 @@ export const AddDirectMessage = withStyles(styles)((props: IProps) => {
         });
       }
       return allNotInvited;
-      //return dUsers.users;
     }
   }, [allUsers, allDm, auth]);
 
@@ -81,7 +70,7 @@ export const AddDirectMessage = withStyles(styles)((props: IProps) => {
           id="form-dialog-title"
           classes={{ root: classes.titleRoot }}
         >
-          {"Invite people to" /* {reactiveVarName()} */}
+          Add direct message
         </DialogTitle>
         <DialogContent style={{ padding: "0px 24px 46px 24px" }}>
           <SelectPeople

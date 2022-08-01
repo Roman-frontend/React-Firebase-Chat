@@ -11,6 +11,9 @@
     "addDm": "new dm",
     "search": "Search",
     "dirrectMessageTitle": "Dirrect Messages",
-    "channelTitle": "Channels"
+    "channelTitle": "Channels",
+    "inputMain": "Enter text",
+    "logout": "Logout",
+    "removeAccount": "Remove Account"
   }
 }

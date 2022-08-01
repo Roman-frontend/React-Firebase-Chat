@@ -15,7 +15,7 @@ import {
   Button,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import HeaderProfile from "./HeaderProfile/HeaderProfile.jsx";
+import HeaderProfile from "./HeaderProfile/HeaderProfile";
 import { MaterialUISwitch } from "./HeaderStyles";
 import { CustomThemeContext } from "../../Context/AppContext";
 import imageProfile from "../../images/User-Icon.png";

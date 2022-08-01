@@ -45,10 +45,10 @@ const MessageText = memo(
     const isAuthSender = authId === senderId;
     const marginBox =
       position === "header"
-        ? "0px 0px 6px 0px"
+        ? "0px 0px 4px 0px"
         : isAuthSender
-        ? "0px 0px 6px 85px"
-        : "0px 0px 6px 293px";
+        ? "0px 0px 4px 85px"
+        : "0px 0px 4px 293px";
 
     return (
       <Box

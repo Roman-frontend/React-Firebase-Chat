@@ -11,11 +11,6 @@ import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { getDatabase } from "firebase/database";
 import { SnackbarProvider } from "notistack";
-// import { ApolloProvider } from "@apollo/client";
-// import { client } from "./GraphQLApp/apolloClient";
-import { IAppContext } from "./Context/Models/IAppContext";
-import IBadge from "./Models/IBadge";
-import { AppContext } from "./Context/AppContext";
 import "./css/style.sass";
 
 export default function App() {
@@ -29,13 +24,9 @@ export default function App() {
       <AuthProvider sdk={auth}>
         <DatabaseProvider sdk={database}>
           <Router>
-            {/* <ApolloProvider client={client}> */}
             <SnackbarProvider maxSnack={3}>
-              <AppContext.Provider value={{}}>
-                <AppRoutes />
-              </AppContext.Provider>
+              <AppRoutes />
             </SnackbarProvider>
-            {/* </ApolloProvider> */}
           </Router>
         </DatabaseProvider>
       </AuthProvider>

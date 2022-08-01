@@ -1,4 +1,4 @@
-import React, { useMemo, memo, useState, useEffect, useContext } from "react";
+import React, { memo, useState, useContext } from "react";
 import {
   doc,
   DocumentReference,
@@ -6,6 +6,7 @@ import {
   updateDoc,
   setDoc,
 } from "firebase/firestore";
+import { useTranslation } from "react-i18next";
 import { useFirestore } from "reactfire";
 import { nanoid } from "nanoid";
 import { makeStyles } from "@mui/styles";
@@ -13,7 +14,6 @@ import BorderColorIcon from "@mui/icons-material/BorderColor";
 import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Grid";
 import { ChatContext } from "../../../Context/ChatContext";
-import { string } from "prop-types";
 
 interface IProps {
   changeMessageRef: null | React.MutableRefObject<DocumentData | null>;
@@ -47,6 +47,7 @@ export const InputUpdateMessages = memo((props: IProps) => {
   } = props;
   const { activeChannelId, activeDirectMessageId, authId, allDm, allChannels } =
     useContext(ChatContext);
+  const { t } = useTranslation();
   const firestore = useFirestore();
   const classes = useStyles();
   const [inputText, setInputText] = useState<string>("");
@@ -198,7 +199,7 @@ export const InputUpdateMessages = memo((props: IProps) => {
           <TextField
             inputProps={{ "data-testid": "on-key-up-main-input" }}
             value={inputText}
-            label="Enter text"
+            label={t("description.inputMain")}
             variant="standard"
             inputRef={inputRef}
             autoFocus={true}

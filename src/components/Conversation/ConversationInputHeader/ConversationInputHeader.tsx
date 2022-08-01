@@ -4,12 +4,10 @@ import React, {
   SetStateAction,
   MutableRefObject,
 } from "react";
-// import { useQuery } from '@apollo/client';
 import { useTheme } from "@mui/material/styles";
 import { Box } from "@mui/system";
 import { Grid } from "@mui/material";
 import EndActionButton from "../EndActionButton/EndActionButton.jsx";
-// import { GET_USERS } from '../../../GraphQLApp/queryes';
 import { ChatContext } from "../../../Context/ChatContext";
 import { DocumentData } from "firebase/firestore";
 
@@ -33,7 +31,6 @@ export const ConversationInputHeader = (props: IProps) => {
   } = props;
   const { authId, allUsers } = useContext(ChatContext);
   const theme = useTheme();
-  // const { data: users } = useQuery(GET_USERS);
 
   function setName() {
     if (closeBtnReplyMsg && Array.isArray(allUsers)) {

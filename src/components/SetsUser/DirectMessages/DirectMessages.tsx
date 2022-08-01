@@ -104,8 +104,6 @@ export function DirectMessages(props: IProps) {
     invited: string[] = []
   ): Promise<void> {
     if (action === "done" && invited && invited[0] && authId) {
-      console.log("done: ", invited);
-
       invited.forEach(async (invitedUid: string) => {
         const newDmId = await createDm(invitedUid);
         await addDmToInvitedUser(invitedUid, newDmId);

@@ -1,5 +1,4 @@
 import React, { memo, useState } from "react";
-// import { gql, useMutation } from "@apollo/client";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 import {
   User,

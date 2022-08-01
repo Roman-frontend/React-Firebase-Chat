@@ -7,18 +7,13 @@ import React, {
   MutableRefObject,
 } from "react";
 import {
-  collection,
   doc,
-  setDoc,
-  getDoc,
-  updateDoc,
   deleteDoc,
   DocumentData,
   DocumentReference,
 } from "firebase/firestore";
 import { useFirestore } from "reactfire";
 import { nanoid } from "nanoid";
-// import { useMutation, useReactiveVar } from "@apollo/client";
 import { useTheme } from "@mui/material/styles";
 import { Box } from "@mui/system";
 import Button from "@mui/material/Button";
@@ -27,8 +22,6 @@ import EditIcon from "@mui/icons-material/Edit";
 import ForwardIcon from "@mui/icons-material/Forward";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { ChatContext } from "../../../Context/ChatContext";
-// import { REMOVE_MESSAGE } from "../ConversationGraphQL/queryes";
-// import { reactiveVarId, activeChatId } from "../../../GraphQLApp/reactiveVars";
 import { IMapedMessage } from "../Models/IMessage";
 
 interface IProps {
@@ -57,10 +50,6 @@ export function ConversationActionsMessage(props: IProps) {
     useContext(ChatContext);
   const theme = useTheme();
   const firestore = useFirestore();
-  // const userId = useReactiveVar(reactiveVarId);
-  // const activeChannelId = useReactiveVar(activeChatId).activeChannelId;
-  // const activeDirectMessageId =
-  //   useReactiveVar(activeChatId).activeDirectMessageId;
   const [focusRootInput, setFocusRootInput] = useState<string | null>(null);
 
   useEffect(() => {
@@ -74,21 +63,6 @@ export function ConversationActionsMessage(props: IProps) {
       inputRef?.current.focus();
     }
   }, [focusRootInput]);
-
-  // const [removeMessage] = useMutation(REMOVE_MESSAGE, {
-  //   update: (cache) => {
-  //     cache.modify({
-  //       fields: {
-  //         messages({ DELETE }) {
-  //           return DELETE;
-  //         },
-  //       },
-  //     });
-  //   },
-  //   onError(error) {
-  //     console.log(`Помилка при видаленні повідомлення ${error}`);
-  //   },
-  // });
 
   const handleAnswer = () => {
     setOpenPopup("");

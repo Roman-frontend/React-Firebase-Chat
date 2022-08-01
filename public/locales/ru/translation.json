@@ -11,6 +11,9 @@
     "addDm": "Добавить прямое сообщение",
     "search": "Поиск",
     "dirrectMessageTitle": "Прямые сообщения",
-    "channelTitle": "Группы"
+    "channelTitle": "Группы",
+    "inputMain": "Введите текст",
+    "logout": "Выйти",
+    "removeAccount": "Удалить аккаунт"
   }
 }

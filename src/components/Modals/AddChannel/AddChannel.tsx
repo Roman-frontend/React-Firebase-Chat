@@ -1,12 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
-import { nanoid } from "nanoid";
 import {
   collection,
   onSnapshot,
   doc,
   setDoc,
   getDoc,
-  getDocs,
   query,
   addDoc,
   updateDoc,
@@ -81,20 +79,6 @@ export const AddChannel = (props: IProps) => {
   const theme = useTheme();
 
   useEffect(() => {
-    // (async function () {
-    //   const usersInfoCol = collection(firestore, "usersInfo");
-    //   const q = query(usersInfoCol);
-    //   const snapshot = await getDocs(q);
-    //   const results = [];
-    //   snapshot.docs.forEach((snap) => {
-    //     if (snap.data().uid !== auth.currentUser.uid) {
-    //       results.push({ ...snap.data() });
-    //     }
-    //   });
-    //   notInvitedRef.current = results;
-    //   console.log(results);
-    // })();
-
     function unsubscribe() {
       if (!modalAddChannelIsOpen) {
         const usersInfoCol = collection(firestore, "usersInfo");
@@ -140,9 +124,6 @@ export const AddChannel = (props: IProps) => {
         return { uid, badgeNewMessages: 0, isOpen: false };
       });
       const channelsCol = collection(firestore, "channels");
-
-      console.log(invitedContainAuthUid);
-
       const newChannel = await addDoc(channelsCol, {
         name: form.name,
         admin: auth.currentUser.uid,
@@ -157,8 +138,6 @@ export const AddChannel = (props: IProps) => {
         uid: newChannel.id,
       });
 
-      console.log(newChannel.id);
-
       invitedContainAuthUid.forEach(async (invitedUid) => {
         const docRef = doc(firebaseStore, `usersInfo`, invitedUid);
         const docSnap = await getDoc(docRef);
@@ -168,7 +147,6 @@ export const AddChannel = (props: IProps) => {
           const userChannels = docSnapData.channels
             ? [...docSnapData.channels, newChannel.id]
             : [newChannel.id];
-          console.log(docSnapData);
 
           await setDoc(docRef, {
             ...docSnap.data(),

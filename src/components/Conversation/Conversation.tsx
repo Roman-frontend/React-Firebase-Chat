@@ -1,13 +1,5 @@
 import React, { useState, useRef, useCallback, useContext } from "react";
-import {
-  doc,
-  setDoc,
-  getDoc,
-  updateDoc,
-  deleteDoc,
-  DocumentData,
-  DocumentReference,
-} from "firebase/firestore";
+import { DocumentData } from "firebase/firestore";
 import { Box } from "@mui/system";
 import { ConversationHeaderChannel } from "./ConversationHeader/ConversationHeaderChannel";
 import { ConversationHeaderDrMsg } from "./ConversationHeader/ConversationHeaderDrMsg";
@@ -17,12 +9,7 @@ import { InputUpdateMessages } from "./InputUpdateMessages/InputUpdateMessages";
 import { ConversationInputHeader } from "./ConversationInputHeader/ConversationInputHeader";
 import { ConversationActionsMessage } from "./ConversationActionsMessage/ConversationActionsMessage";
 import imageError from "../../images/error.png";
-// import { useQuery, useReactiveVar } from "@apollo/client";
-// import { CHANNELS } from "../SetsUser/SetsUserGraphQL/queryes";
-// import { activeChatId, reactiveVarId } from "../../GraphQLApp/reactiveVars";
 import { IMapedMessage } from "./Models/IMessage";
-// import IChannel from "../Models/IChannel";
-// import IBadge from "../../Models/IBadge";
 
 interface IProps {
   isErrorInPopap: boolean;
@@ -33,17 +20,12 @@ export default function Conversation(props: IProps) {
   const { isErrorInPopap, setIsErrorInPopap } = props;
   const { activeChannelId, activeDirectMessageId, allChannels, authId } =
     useContext(ChatContext);
-  // const { data: dChannels } = useQuery(CHANNELS);
   const [popupMessage, setPopupMessage] = useState<null | IMapedMessage>(null);
   const [closeBtnChangeMsg, setCloseBtnChangeMsg] = useState(false);
   const [closeBtnReplyMsg, setCloseBtnReplyMsg] = useState(false);
   const [openPopup, setOpenPopup] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
   const changeMessageRef = useRef<null | DocumentData>(null);
-  // const activeChannelId = useReactiveVar(activeChatId).activeChannelId;
-  // const activeDirectMessageId =
-  //   useReactiveVar(activeChatId).activeDirectMessageId;
-  // const userId = useReactiveVar(reactiveVarId);
 
   const checkPrivate = useCallback(() => {
     if (allChannels?.length && activeChannelId) {
@@ -106,13 +88,6 @@ export default function Conversation(props: IProps) {
       <ConversationHeaderDrMsg />
     );
   }, [activeChannelId, activeDirectMessageId]);
-
-  // console.log(
-  //   "activeDirectMessageId: ",
-  //   activeDirectMessageId,
-  //   "activeChannelId: ",
-  //   activeChannelId
-  // );
 
   return (
     <Box data-testid="conversation-main-block">

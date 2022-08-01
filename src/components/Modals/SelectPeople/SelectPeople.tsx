@@ -1,14 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
-import { collection, getDocs, query, DocumentData } from "firebase/firestore";
-import { useFirestore } from "reactfire";
+import { DocumentData } from "firebase/firestore";
 import { Button } from "@mui/material";
 import FormControl from "@mui/material/FormControl";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
-import Select, { Options } from "react-select";
-// import Select, {SelectItemRenderer} from "react-dropdown-select";
-import { useTheme } from "@mui/material/styles";
-import { StyledBadgeWraper } from "../../Helpers/StyledBadge";
+import Select from "react-select";
 import { ChatContext } from "../../../Context/ChatContext";
 
 interface IProps {
@@ -19,37 +15,11 @@ interface IProps {
   notInvitedRef: DocumentData[] | undefined;
 }
 
-// interface IItemRenderer {
-//   channels: string[];
-//   email: string[];
-//   images: string[];
-//   name: string;
-//   surname: string;
-//   uid: string;
-//   label?: string;
-// }
-
 interface IItemRenderer extends DocumentData {
   label?: string;
 }
 
 const selectStyles: any = {
-  // option: (provided, state) => ({
-  //   ...provided,
-  //   borderBottom: '1px dotted pink',
-  //   color: state.isSelected ? 'red' : 'blue',
-  //   padding: 20,
-  // }),
-  // control: () => ({
-  //   // none of react-select's styles are passed to <Control />
-  //   width: 200,
-  // }),
-  // singleValue: (provided, state) => {
-  //   const opacity = state.isDisabled ? 0.5 : 1;
-  //   const transition = 'opacity 300ms';
-
-  //   return { ...provided, opacity, transition };
-  // }
   menu: () => ({
     overflowY: "scroll",
     background: "white",
@@ -57,10 +27,7 @@ const selectStyles: any = {
 };
 
 export const SelectPeople = (props: IProps) => {
-  const { isDialogChanged, closePopap, done, isErrorInPopap, notInvitedRef } =
-    props;
-  const firestore = useFirestore();
-  const theme = useTheme();
+  const { closePopap, done, isErrorInPopap, notInvitedRef } = props;
   const [list, setList] = useState<IItemRenderer[]>([]);
   const [invited, setInvited] = useState<string[]>([]);
   const { allUsers } = useContext(ChatContext);
@@ -86,7 +53,6 @@ export const SelectPeople = (props: IProps) => {
   function addPeopleToInvited(selected: IItemRenderer) {
     if (Array.isArray(allUsers) && Array.isArray(list)) {
       const selectedIndex = list.indexOf(selected);
-      // const electData = allUsers.filter((user) => user.uid === selected.uid);
       setList((prevList) => {
         if (Array.isArray(prevList)) {
           prevList.splice(selectedIndex, 1);
@@ -94,15 +60,12 @@ export const SelectPeople = (props: IProps) => {
         return prevList;
       });
       setInvited((prev) => prev.concat(selected.uid));
-      //invitedRef.current = invitedRef.current.concat(electData[0].id);
     }
   }
 
   const handleChange = (selectedUser: any) => {
     addPeopleToInvited(selectedUser[0]);
   };
-
-  console.log(list, notInvitedRef);
 
   return (
     <div style={styles.root}>

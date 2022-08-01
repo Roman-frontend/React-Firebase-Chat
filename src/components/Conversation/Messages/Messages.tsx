@@ -20,7 +20,6 @@ import { useFirestore } from "reactfire";
 import Message from "./Message/Message";
 import { Loader } from "../../Helpers/Loader";
 import { IMapedMessage } from "../Models/IMessage";
-import IBadge from "../../../Models/IBadge";
 import { ChatContext } from "../../../Context/ChatContext";
 
 interface IProps {
@@ -58,7 +57,6 @@ export const Messages = memo(
           results.push({ ...snap.data() });
         });
         if (Array.isArray(results)) {
-          console.log(results, activeChatId);
           setMessages(results);
         }
       });

@@ -25,15 +25,6 @@ interface IProps {
   setCloseBtnReplyMsg: Dispatch<SetStateAction<boolean>>;
 }
 
-// interface IUser {
-//   id: string;
-//   name: string;
-//   email: string;
-//   password: string;
-//   channels: string[];
-//   directMessages: string[];
-// }
-
 const Message = memo(
   ({
     arrMsgs,
@@ -105,7 +96,7 @@ const Message = memo(
                   margin:
                     authId === m.senderId
                       ? "6px 0px 0px 35px"
-                      : "6px 0px 0px 38%",
+                      : "6px 0px 0px 243px",
                 }}
                 id={m.id}
               >

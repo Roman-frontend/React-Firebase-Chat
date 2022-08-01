@@ -1,5 +1,4 @@
 import React, { useContext } from "react";
-// import { useReactiveVar } from "@apollo/client";
 import { useFirestore } from "reactfire";
 import {
   doc,
@@ -11,8 +10,6 @@ import { useTheme } from "@mui/material/styles";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import Avatar from "@mui/material/Avatar";
-// import { activeChatId } from "../../../GraphQLApp/reactiveVars";
-import IChannel from "../../Models/IChannel";
 import { Badge } from "@mui/material";
 import { ChatContext } from "../../../Context/ChatContext";
 

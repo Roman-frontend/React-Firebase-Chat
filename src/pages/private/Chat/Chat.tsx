@@ -25,7 +25,6 @@ import { ICustomThemeContext } from "../../../Context/Models/ICustomThemeContext
 import getTheme from "../../../components/Theme/base";
 import { ThemeProvider } from "@mui/material/styles";
 import { ChatContext } from "../../../Context/ChatContext";
-import IBadge from "../../../Models/IBadge";
 import { IChatContext } from "../../../Context/Models/IChatContext";
 
 export const Chat = memo(() => {
@@ -92,52 +91,6 @@ export const Chat = memo(() => {
 
     getUsers();
   }, []);
-
-  // onSnapshot with async await
-  // useEffect(() => {
-  //   let unsubscribe: any;
-
-  //   const allChannelsId = async () => {
-  //     if (authId) {
-  //       const userRef = doc(firestore, `usersInfo`, authId);
-  //       const userSnap = await getDoc(userRef);
-  //       const userChannels = userSnap.data()?.channels;
-  //       console.log(userChannels)
-
-  //       const channelsCol = collection(firestore, "channels");
-  //       const q = query(
-  //         channelsCol,
-  //         where("members", "array-contains", `${authId}`)
-  //       );
-
-  //       onSnapshot(
-  //         q,
-  //         (snapshot) => {
-  //           const results: DocumentData[] = [];
-  //           snapshot.docs.forEach((snap) => {
-  //             results.push({ ...snap.data() });
-  //           });
-  //           if (Array.isArray(results)) {
-  //             setAllChannels(results);
-  //           }
-  //         },
-  //         (error) => {
-  //           console.log("error in snapshot... ", error);
-  //         }
-  //       );
-  //     }
-  //   };
-
-  //   const getChatAndSubscribe = async () => {
-  //     unsubscribe = await allChannelsId();
-  //   };
-
-  //   getChatAndSubscribe();
-
-  //   return () => {
-  //     unsubscribe?.();
-  //   };
-  // }, [authId]);
 
   useEffect(() => {
     function unsubscribe() {
@@ -208,53 +161,49 @@ export const Chat = memo(() => {
     }
   }, [activeChannelId, activeDirectMessageId, allChannels, allDm]);
 
-  useEffect(() => {
-    function unsubscribe() {
-      const activeChatId = activeChannelId
-        ? activeChannelId
-        : activeDirectMessageId;
-      const activeChatName = activeChannelId ? "channels" : "directMessages";
-      if (activeChatId && activeChatName) {
-        const chatRef: DocumentReference<DocumentData> = doc(
-          firestore,
-          activeChatName,
-          activeChatId
-        );
+  async function offlineInDM() {
+    console.log("offlineInDM");
+    const activeChatId = activeChannelId
+      ? activeChannelId
+      : activeDirectMessageId;
+    const activeChatName = activeChannelId ? "channels" : "directMessages";
+    if (activeChatId && activeChatName) {
+      const chatRef: DocumentReference<DocumentData> = doc(
+        firestore,
+        activeChatName,
+        activeChatId
+      );
 
-        const chat = activeChannelId
-          ? allChannels.find((c) => c.uid === activeChatId)
-          : allDm.find((dm) => dm.uid === activeDirectMessageId);
-        let isUpdateDoc;
-        const chatWithNewBadge = chat?.badge.map(
-          (
-            b: { uid: string; isOpen: boolean; badgeNewMessages: number },
-            index: number
-          ) => {
-            if (b.uid === authId && b.isOpen) {
-              isUpdateDoc = index;
-              return { ...b, isOpen: false };
-            }
-
-            return b;
+      const chat = activeChannelId
+        ? allChannels.find((c) => c.uid === activeChannelId)
+        : allDm.find((dm) => dm.uid === activeDirectMessageId);
+      let isUpdateDoc;
+      const chatWithNewBadge = chat?.badge.map(
+        (
+          b: { uid: string; isOpen: boolean; badgeNewMessages: number },
+          index: number
+        ) => {
+          if (b.uid === authId && b.isOpen) {
+            isUpdateDoc = index;
+            return { ...b, isOpen: false };
           }
-        );
-        if (isUpdateDoc !== undefined) {
-          updateDoc(chatRef, { badge: chatWithNewBadge });
+
+          return b;
         }
+      );
+      console.log(isUpdateDoc);
+      if (isUpdateDoc !== undefined) {
+        await updateDoc(chatRef, { badge: chatWithNewBadge });
       }
     }
+  }
 
-    window.onbeforeunload = function () {
-      unsubscribe();
-    };
-
-    window.onunload = function () {
-      unsubscribe();
-    };
-  }, [firestore, activeChannelId, activeDirectMessageId]);
+  // window.onunload = function () {
+  //   console.log("onunload");
+  //   offlineInDM();
+  // };
 
   async function changeOnline(isOnline: boolean) {
-    console.log(authId);
     if (authId) {
       const userRef: DocumentReference<DocumentData> = doc(
         firestore,
@@ -310,6 +259,12 @@ export const Chat = memo(() => {
     setModalAddChannelIsOpen,
     modalAddDmIsOpen,
     setModalAddDmIsOpen,
+  };
+
+  window.onbeforeunload = function () {
+    console.log("onbeforeunload");
+    offlineInDM();
+    changeOnline(false);
   };
 
   return (

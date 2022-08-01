@@ -4,8 +4,6 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
   signInWithEmailAndPassword,
-  signInWithRedirect,
-  getRedirectResult,
 } from "firebase/auth";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 import { useAuth } from "reactfire";
@@ -77,7 +75,6 @@ export const SignInPage = () => {
           values.email,
           values.password
         );
-        console.log(user);
         if (user) {
           navigate("/chat");
 
@@ -94,7 +91,6 @@ export const SignInPage = () => {
       const docRef = doc(firebaseStore, `usersInfo`, user.uid);
       const docSnap = await getDoc(docRef);
 
-      console.log(user);
       if (!docSnap.data()) {
         await setDoc(docRef, {
           ...docSnap.data(),

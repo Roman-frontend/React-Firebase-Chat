@@ -1,6 +1,5 @@
 import React, { Dispatch, SetStateAction } from "react";
 import { DocumentData } from "firebase/firestore";
-import IBadge from "../../Models/IBadge";
 
 export interface IChatContext {
   authId: string | null;

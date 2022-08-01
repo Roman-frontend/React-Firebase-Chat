@@ -1,4 +1,4 @@
-import React, { memo, useState, useContext } from "react";
+import React, { memo, useContext } from "react";
 import { useFirestore } from "reactfire";
 import {
   doc,
@@ -59,7 +59,6 @@ export const DirectMessage = memo((props: IProps) => {
   }
 
   async function handleClick() {
-    console.log("handleClick");
     const prevActiveChatId = activeChannelId
       ? activeChannelId
       : activeDirectMessageId;

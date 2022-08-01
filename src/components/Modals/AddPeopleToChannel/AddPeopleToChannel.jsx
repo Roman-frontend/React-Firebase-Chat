@@ -1,13 +1,10 @@
 import React, { useRef, useEffect, useContext } from "react";
-// import { useQuery, useReactiveVar } from "@apollo/client";
 import { useTheme } from "@mui/material/styles";
 import { withStyles } from "@mui/styles";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
+import { DialogContent } from "@mui/material";
 import { SelectPeople } from "../SelectPeople/SelectPeople";
-// import { AUTH, GET_USERS } from "../../../GraphQLApp/queryes";
-// import { CHANNELS } from "../../SetsUser/SetsUserGraphQL/queryes";
-// import { activeChatId } from "../../../GraphQLApp/reactiveVars";
 import { ChatContext } from "../../../Context/ChatContext";
 
 const styles = (theme) => ({
@@ -27,10 +24,6 @@ export const AddPeopleToChannel = withStyles(styles)((props) => {
     authId,
   } = useContext(ChatContext);
   const theme = useTheme();
-  // const { data: auth } = useQuery(AUTH);
-  // const { data: dChannels } = useQuery(CHANNELS);
-  // const { data: allUsers } = useQuery(GET_USERS);
-  // const activeChannelId = useReactiveVar(activeChatId).activeChannelId;
   const notInvitedRef = useRef();
 
   useEffect(() => {
@@ -48,7 +41,6 @@ export const AddPeopleToChannel = withStyles(styles)((props) => {
         });
       }
       notInvitedRef.current = allNotInvited;
-      //notInvitedRef.current = allUsers.users;
     }
   }, [allUsers, allChannels, authId, activeChannelId]);
 
@@ -76,12 +68,14 @@ export const AddPeopleToChannel = withStyles(styles)((props) => {
         >
           Invite people to #{chatNameRef.current}
         </DialogTitle>
-        <SelectPeople
-          closePopap={closePopap}
-          isErrorInPopap={isErrorInPopap}
-          notInvitedRef={notInvitedRef.current}
-          done={doneInvite}
-        />
+        <DialogContent style={{ padding: "0px 24px 46px 24px" }}>
+          <SelectPeople
+            closePopap={closePopap}
+            isErrorInPopap={isErrorInPopap}
+            notInvitedRef={notInvitedRef.current}
+            done={doneInvite}
+          />
+        </DialogContent>
       </Dialog>
     </>
   );

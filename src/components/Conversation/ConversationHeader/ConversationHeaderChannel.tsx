@@ -1,15 +1,11 @@
 import React, { useState, useMemo, useRef, useEffect, useContext } from "react";
 import { useFirestore } from "reactfire";
-import { useSnackbar } from "notistack";
-// import { useMutation, useQuery, useReactiveVar } from "@apollo/client";
 import { useTheme } from "@mui/material/styles";
 import Grid from "@mui/material/Grid";
-import GroupAddIcon from "@mui/icons-material/GroupAdd";
 import Drawer from "@mui/material/Drawer";
 import { Box } from "@mui/system";
 import { Members } from "./Members";
 import { ConversationMembers } from "../../Modals/ConversationHeader/ConversationMembers";
-import { AddPeopleToChannel } from "../../Modals/AddPeopleToChannel/AddPeopleToChannel";
 import ChannelsRightBar from "../../SetsUser/Channels/ChannelsRightBar";
 import { ChatContext } from "../../../Context/ChatContext";
 import {
@@ -34,7 +30,6 @@ export const ConversationHeaderChannel = ({
     useContext(ChatContext);
   const firestore = useFirestore();
   const theme = useTheme();
-  const { enqueueSnackbar } = useSnackbar();
   const [modalIsShowsMembers, setModalIsShowsMembers] = useState(false);
   const [isOpenRightBarChannels, setIsOpenRightBarChannels] = useState(false);
   const chatNameRef = useRef("#general");
@@ -85,9 +80,7 @@ export const ConversationHeaderChannel = ({
 
     if (userSnap.exists() && invitedId && activeChannel?.uid) {
       const userSnapData: DocumentData | undefined = userSnap.data();
-      console.log(userSnapData, invitedId);
       const updatedChannels = userSnapData.channels.concat(activeChannel.uid);
-      console.log(updatedChannels);
       await setDoc(userRef, {
         ...userSnap.data(),
         channels: updatedChannels,
@@ -187,11 +180,6 @@ export const ConversationHeaderChannel = ({
         doneInvite={doneInvite}
         isErrorInPopap={isErrorInPopap}
       />
-      {/* <AddPeopleToChannel
-        chatNameRef={chatNameRef}
-        doneInvite={doneInvite}
-        isErrorInPopap={isErrorInPopap}
-      /> */}
     </div>
   );
 };

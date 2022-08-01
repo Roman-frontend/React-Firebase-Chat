@@ -3,7 +3,6 @@ import { useLocation } from "react-router-dom";
 import { Paper } from "@mui/material";
 import { SignInPage } from "./SignInPage/SignInPage";
 import { SignUpPage } from "./SignUpPage/SignUpPage";
-// import conversationBackground from "../../images/Conversation-background.jpeg";
 import backgroundChat from "../../images/test-2-chat.jpeg";
 
 const styles = {

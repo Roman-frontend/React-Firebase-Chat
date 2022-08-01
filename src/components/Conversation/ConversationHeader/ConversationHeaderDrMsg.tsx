@@ -1,13 +1,7 @@
 import React, { useState, useContext } from "react";
 import { useTheme } from "@mui/material/styles";
 import Grid from "@mui/material/Grid";
-import IconButton from "@mui/material/IconButton";
-import PersonIcon from "@mui/icons-material/Person";
 import { Drawer, Box } from "@mui/material";
-// import { useQuery, useReactiveVar } from "@apollo/client";
-// import { AUTH, GET_USERS } from "../../../GraphQLApp/queryes";
-// import { GET_DIRECT_MESSAGES } from "../../SetsUser/SetsUserGraphQL/queryes";
-// import { activeChatId } from "../../../GraphQLApp/reactiveVars";
 import { ChatContext } from "../../../Context/ChatContext";
 import { determineActiveChat } from "../../Helpers/determineActiveChat";
 import DirectMessageRightBar from "../../SetsUser/DirectMessages/DirectMessageRightBar";
@@ -16,11 +10,6 @@ export const ConversationHeaderDrMsg = () => {
   const { activeDirectMessageId, allDm, allUsers, authId } =
     useContext(ChatContext);
   const theme = useTheme();
-  // const { data: auth } = useQuery(AUTH);
-  // const { data: listDirectMessages } = useQuery(GET_DIRECT_MESSAGES);
-  // const { data: allUsers } = useQuery(GET_USERS);
-  // const activeDirectMessageId =
-  //   useReactiveVar(activeChatId).activeDirectMessageId;
   const [isOpenRightBarDrMsg, setIsOpenRightBarDrMsg] = useState(false);
 
   function createName() {
