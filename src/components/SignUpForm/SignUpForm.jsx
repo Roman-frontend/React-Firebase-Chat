@@ -2,7 +2,7 @@ import React from "react";
 import { makeStyles } from "@mui/styles";
 import TextField from "@mui/material/TextField";
 import { colors } from "@mui/material";
-import "./auth-form.sass";
+import "../../pages/public/auth-body.sass";
 
 const useStyles = makeStyles((theme) => ({
   inputIsValidated: {
@@ -33,7 +33,7 @@ export function SignUpForm(props) {
   return (
     <>
       <TextField
-        style={{ width: "33.7vw", margin: "0vh 1vw" }}
+        style={{ width: "-webkit-fill-available", margin: "0vh 1vw" }}
         label={label}
         name={name}
         value={value}

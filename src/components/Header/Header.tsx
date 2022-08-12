@@ -92,103 +92,120 @@ const Header = memo((props: IProps) => {
         }}
         position="relative"
       >
-        <Toolbar>
-          <IconButton
-            onClick={() => setIsOpenLeftBar(!isOpenLeftBar)}
-            edge="start"
+        <Toolbar style={{ justifyContent: "space-between" }}>
+          <Grid
+            style={{
+              display: "flex",
+              width: "-webkit-fill-available",
+              alignItems: "center",
+            }}
           >
-            <MenuIcon />
-          </IconButton>
-          <Grid item xs={9}>
-            <Typography variant="h6" noWrap component="div">
-              {t("description.header")}
-            </Typography>
-          </Grid>
-          <Grid item xs={2}>
-            <MaterialUISwitch
-              sx={{ m: 1 }}
-              checked={!isDark}
-              onChange={handleChangeSwitch}
-            />
-          </Grid>
-          <Grid item xs={1}>
-            <Tooltip
-              title={tooltipEn}
-              TransitionComponent={Zoom}
-              placement="bottom"
-            >
-              <Button
-                style={{
-                  background:
-                    i18n.language === "en"
-                      ? theme.palette.primary.main
-                      : "none",
-                  border: i18n.language === "en" ? "solid 2px" : "none",
-                  padding: 0,
-                }}
-                color="inherit"
-                onClick={() => changeLanguage("en")}
-              >
-                EN
-              </Button>
-            </Tooltip>
-          </Grid>
-          <Grid item xs={1}>
-            <Tooltip
-              title={tooltipRu}
-              TransitionComponent={Zoom}
-              placement="bottom"
-            >
-              <Button
-                style={{
-                  background:
-                    i18n.language === "ru"
-                      ? theme.palette.primary.main
-                      : "none",
-                  border: i18n.language === "ru" ? "solid 2px" : "none",
-                  padding: 0,
-                }}
-                color="inherit"
-                onClick={() => changeLanguage("ru")}
-              >
-                RU
-              </Button>
-            </Tooltip>
-          </Grid>
-          <Grid item xs={1}>
             <IconButton
-              size="large"
-              edge="end"
-              data-testid="profile-button"
-              aria-label="account of current user"
-              aria-controls={menuId}
-              aria-haspopup="true"
-              onClick={openRightBar}
+              onClick={() => setIsOpenLeftBar(!isOpenLeftBar)}
+              edge="start"
             >
-              <Avatar alt="Remy Sharp" src={imageProfile} />
+              <MenuIcon />
             </IconButton>
+            <Grid item xs={9} style={{ flexBasis: "auto" }}>
+              <Typography variant="h6" noWrap component="div">
+                {t("description.header")}
+              </Typography>
+            </Grid>
           </Grid>
-          <div>
-            <React.Fragment>
-              <Drawer
-                anchor="right"
-                sx={{
-                  "& .MuiDrawer-paperAnchorRight": {
-                    background: theme.palette.primary.main,
-                  },
-                }}
-                open={isOpenRightBarUser}
-                onClose={closeRightBar}
+          <Grid
+            style={{
+              display: "flex",
+              width: "-webkit-fill-available",
+              alignItems: "center",
+              justifyContent: "end",
+            }}
+          >
+            <Grid style={{ minWidth: 85 }} item xs={2}>
+              <MaterialUISwitch
+                sx={{ m: 1 }}
+                checked={!isDark}
+                onChange={handleChangeSwitch}
+              />
+            </Grid>
+            <Grid style={{ minWidth: 65 }} item xs={1}>
+              <Tooltip
+                title={tooltipEn}
+                TransitionComponent={Zoom}
+                placement="bottom"
               >
-                <Box
-                  sx={{ width: 250, margin: "56px 0px 0px 0px" }}
-                  role="presentation"
+                <Button
+                  style={{
+                    background:
+                      i18n.language === "en"
+                        ? theme.palette.primary.main
+                        : "none",
+                    border: i18n.language === "en" ? "solid 2px" : "none",
+                    padding: 0,
+                  }}
+                  color="inherit"
+                  onClick={() => changeLanguage("en")}
                 >
-                  <HeaderProfile />
-                </Box>
-              </Drawer>
-            </React.Fragment>
-          </div>
+                  EN
+                </Button>
+              </Tooltip>
+            </Grid>
+            <Grid style={{ minWidth: 65 }} item xs={1}>
+              <Tooltip
+                title={tooltipRu}
+                TransitionComponent={Zoom}
+                placement="bottom"
+              >
+                <Button
+                  style={{
+                    background:
+                      i18n.language === "ru"
+                        ? theme.palette.primary.main
+                        : "none",
+                    border: i18n.language === "ru" ? "solid 2px" : "none",
+                    padding: 0,
+                  }}
+                  color="inherit"
+                  onClick={() => changeLanguage("ru")}
+                >
+                  RU
+                </Button>
+              </Tooltip>
+            </Grid>
+            <Grid style={{ minWidth: 65 }} item xs={1}>
+              <IconButton
+                size="large"
+                edge="end"
+                data-testid="profile-button"
+                aria-label="account of current user"
+                aria-controls={menuId}
+                aria-haspopup="true"
+                onClick={openRightBar}
+              >
+                <Avatar alt="Remy Sharp" src={imageProfile} />
+              </IconButton>
+            </Grid>
+            <div>
+              <React.Fragment>
+                <Drawer
+                  anchor="right"
+                  sx={{
+                    "& .MuiDrawer-paperAnchorRight": {
+                      background: theme.palette.primary.main,
+                    },
+                  }}
+                  open={isOpenRightBarUser}
+                  onClose={closeRightBar}
+                >
+                  <Box
+                    sx={{ width: 250, margin: "56px 0px 0px 0px" }}
+                    role="presentation"
+                  >
+                    <HeaderProfile />
+                  </Box>
+                </Drawer>
+              </React.Fragment>
+            </div>
+          </Grid>
         </Toolbar>
       </AppBar>
     </Grid>

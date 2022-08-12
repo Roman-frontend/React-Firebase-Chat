@@ -19,7 +19,7 @@ import {
 } from "../../../components/Helpers/validateMethods/validateMethods.jsx";
 import { SignUpForm } from "../../../components/SignUpForm/SignUpForm.jsx";
 import { AuthLoader } from "../../../components/Helpers/Loader.jsx";
-import "./auth-body.sass";
+import "../auth-body.sass";
 
 interface IFormData {
   name: string;
@@ -136,16 +136,13 @@ export const SignUpPage = memo(() => {
         handleChange={setPassword}
       />
 
-      <Box style={{ display: "flex", justifyContent: "space-evenly" }}>
+      <Box className="auth-buttons">
         <Button
           size="small"
           variant="contained"
           type="submit"
           color="primary"
-          style={{
-            width: "13vw",
-            margin: "15px",
-          }}
+          className="sign-handle-button"
           onClick={(e) => handleSubmit(e)}
         >
           Register
@@ -158,6 +155,7 @@ export const SignUpPage = memo(() => {
             textDecoration: "none",
             alignSelf: "center",
             color: "#0000b5",
+            margin: 8,
           }}
         >
           Are you is registered?

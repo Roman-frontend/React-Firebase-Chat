@@ -1,3 +1,31 @@
+$breackpoint_xxl: 650px
+$breackpoint_small: 400px
+
+.sign-paper
+  position: relative
+  top: 15vh
+  width: 500px
+
+.auth-buttons
+  display: flex 
+  justify-content: space-evenly
+
+.sign-handle-button
+  width: 180px
+  margin: 8px !important
+
+@media (max-width: $breackpoint_xxl) 
+  .sign-paper
+    width: 400px
+
+@media (max-width: $breackpoint_small) 
+  .sign-paper
+    width: -webkit-fill-available
+
+  .auth-buttons
+    display: grid 
+    justify-content: space-evenly
+
 .auth-body 
   display: flex
   justify-content: center

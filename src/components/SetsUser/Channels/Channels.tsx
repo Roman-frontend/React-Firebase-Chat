@@ -19,6 +19,7 @@ import { ChatContext } from "../../../Context/ChatContext";
 
 interface IProps {
   isOpenLeftBar: boolean;
+  setIsOpenLeftBar: React.Dispatch<React.SetStateAction<boolean>>;
   isErrorInPopap: boolean;
   setIsErrorInPopap: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -34,12 +35,12 @@ type TTheme = {
 const useStyles = makeStyles(() => ({
   root: {
     width: "100%",
-    maxWidth: 360,
   },
 }));
 
 export function Channels(props: IProps) {
-  const { isOpenLeftBar, isErrorInPopap, setIsErrorInPopap } = props;
+  const { isOpenLeftBar, setIsOpenLeftBar, isErrorInPopap, setIsErrorInPopap } =
+    props;
   const { t } = useTranslation();
   const theme: TTheme = useTheme();
   const classes = useStyles();
@@ -88,6 +89,7 @@ export function Channels(props: IProps) {
                       <Channel
                         channel={channel}
                         isOpenLeftBar={isOpenLeftBar}
+                        setIsOpenLeftBar={setIsOpenLeftBar}
                       />
                     </React.Fragment>
                   ) : null

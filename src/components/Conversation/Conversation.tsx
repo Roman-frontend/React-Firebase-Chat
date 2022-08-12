@@ -1,5 +1,6 @@
 import React, { useState, useRef, useCallback, useContext } from "react";
 import { DocumentData } from "firebase/firestore";
+import { useTheme } from "@mui/material/styles";
 import { Box } from "@mui/system";
 import { ConversationHeaderChannel } from "./ConversationHeader/ConversationHeaderChannel";
 import { ConversationHeaderDrMsg } from "./ConversationHeader/ConversationHeaderDrMsg";
@@ -18,6 +19,7 @@ interface IProps {
 
 export default function Conversation(props: IProps) {
   const { isErrorInPopap, setIsErrorInPopap } = props;
+  const theme = useTheme();
   const { activeChannelId, activeDirectMessageId, allChannels, authId } =
     useContext(ChatContext);
   const [popupMessage, setPopupMessage] = useState<null | IMapedMessage>(null);
@@ -90,14 +92,27 @@ export default function Conversation(props: IProps) {
   }, [activeChannelId, activeDirectMessageId]);
 
   return (
-    <Box data-testid="conversation-main-block">
+    <Box
+      data-testid="conversation-main-block"
+      style={{
+        position: "relative",
+        bottom: 2,
+        maxHeight: "75%",
+        height: 500,
+        width: "-webkit-fill-available",
+      }}
+    >
       {setHeader()}
       <Box
         style={{
           overflowY: "auto",
           flexDirection: "column-reverse",
           display: "flex",
-          height: closeBtnReplyMsg || closeBtnChangeMsg ? 360 : 385,
+          position: "absolute",
+          width: "inherit",
+          top: 60,
+          maxHeight: "inherit",
+          // height: closeBtnReplyMsg || closeBtnChangeMsg ? 360 : 385,
         }}
       >
         {contentMessages()}
@@ -112,7 +127,15 @@ export default function Conversation(props: IProps) {
         changeMessageRef={changeMessageRef}
         popupMessage={popupMessage}
       />
-      <Box style={{ display: openPopup ? "none" : "block" }}>
+      <Box
+        style={{
+          display: openPopup ? "none" : "block",
+          position: "absolute",
+          bottom: 0,
+          left: 0,
+          width: "inherit",
+        }}
+      >
         <InputUpdateMessages
           popupMessage={popupMessage}
           inputRef={inputRef}

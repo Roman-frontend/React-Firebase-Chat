@@ -5,11 +5,11 @@ export const messageDate = (date = Date.now()) => {
     rowDate.getMinutes() > 9
       ? rowDate.getMinutes()
       : `0${rowDate.getMinutes()}`;
-  const second =
-    rowDate.getSeconds() > 9
-      ? rowDate.getSeconds()
-      : `0${rowDate.getSeconds()}`;
+  // const second =
+  //   rowDate.getSeconds() > 9
+  //     ? rowDate.getSeconds()
+  //     : `0${rowDate.getSeconds()}`;
   let result = "";
-  result += hour + ":" + minute + ":" + second;
+  result += hour + ":" + minute;
   return result;
 };

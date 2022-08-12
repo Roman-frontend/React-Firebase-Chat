@@ -51,10 +51,13 @@ export const ConversationInputHeader = (props: IProps) => {
   return (
     <Box
       sx={{
-        position: "relative",
         background: theme.palette.primary.main,
         margin: "0px 65px",
         borderLeft: `inset ${theme.palette.primary.contrastText}`,
+        width: "inherit",
+        position: "absolute",
+        top: 67,
+        left: -27,
       }}
     >
       <Grid container spacing={1}>

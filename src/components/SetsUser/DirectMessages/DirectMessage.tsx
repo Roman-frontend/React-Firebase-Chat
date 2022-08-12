@@ -17,10 +17,11 @@ import { ChatContext } from "../../../Context/ChatContext";
 interface IProps {
   drMsg: DocumentData;
   isOpenLeftBar: boolean;
+  setIsOpenLeftBar: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const DirectMessage = memo((props: IProps) => {
-  const { drMsg, isOpenLeftBar } = props;
+  const { drMsg, isOpenLeftBar, setIsOpenLeftBar } = props;
   const theme = useTheme();
   const {
     authId,
@@ -115,6 +116,9 @@ export const DirectMessage = memo((props: IProps) => {
     }
     setActiveChannelId(null);
     setActiveDirectMessageId(drMsg.uid);
+    if (window.innerWidth < 610) {
+      setIsOpenLeftBar(false);
+    }
   }
 
   if (drMsg && typeof drMsg === "object" && Array.isArray(allUsers)) {
@@ -132,6 +136,7 @@ export const DirectMessage = memo((props: IProps) => {
             },
           },
           textAlign: "center",
+          justifyContent: "center",
         }}
         onClick={handleClick}
         selected={activeDirectMessageId === drMsg.uid ? true : false}

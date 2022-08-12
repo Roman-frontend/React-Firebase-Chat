@@ -4,6 +4,7 @@ import { Paper } from "@mui/material";
 import { SignInPage } from "./SignInPage/SignInPage";
 import { SignUpPage } from "./SignUpPage/SignUpPage";
 import backgroundChat from "../../images/test-2-chat.jpeg";
+import "./auth-body.sass";
 
 const styles = {
   root: {
@@ -28,20 +29,13 @@ const styles = {
 
 export function BackgroundAuth() {
   const path = useLocation().pathname;
-  const spanText = path === "/signIn" ? "Авторизація" : "Реєстрація";
-  const formComponent = path === "/signIn" ? <SignInPage /> : <SignUpPage />;
+  const spanText = path === "/signUp" ? "Реєстрація" : "Авторизація";
+  const formComponent = path === "/signUp" ? <SignUpPage /> : <SignInPage />;
 
   return (
     <div style={styles.root}>
       <div style={styles.auth}>
-        <Paper
-          sx={{
-            position: "relative",
-            top: "15vh",
-            boxShadow:
-              "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 1)",
-          }}
-        >
+        <Paper className="sign-paper">
           <span style={styles.span}>{spanText}</span>
           {formComponent}
         </Paper>

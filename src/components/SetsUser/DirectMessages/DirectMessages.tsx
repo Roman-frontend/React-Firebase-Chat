@@ -29,6 +29,7 @@ import { ChatContext } from "../../../Context/ChatContext";
 
 interface IProps {
   isOpenLeftBar: boolean;
+  setIsOpenLeftBar: React.Dispatch<React.SetStateAction<boolean>>;
   isErrorInPopap: boolean;
   setIsErrorInPopap: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -36,12 +37,12 @@ interface IProps {
 const useStyles = makeStyles((theme) => ({
   root: {
     width: "100%",
-    maxWidth: 360,
   },
 }));
 
 export function DirectMessages(props: IProps) {
-  const { isOpenLeftBar, isErrorInPopap, setIsErrorInPopap } = props;
+  const { isOpenLeftBar, setIsOpenLeftBar, isErrorInPopap, setIsErrorInPopap } =
+    props;
   const firestore = useFirestore();
   const theme = useTheme();
   const { t } = useTranslation();
@@ -124,7 +125,11 @@ export function DirectMessages(props: IProps) {
           <List>
             {allDm.map((dm) => (
               <React.Fragment key={dm.uid}>
-                <DirectMessage drMsg={dm} isOpenLeftBar={isOpenLeftBar} />
+                <DirectMessage
+                  drMsg={dm}
+                  isOpenLeftBar={isOpenLeftBar}
+                  setIsOpenLeftBar={setIsOpenLeftBar}
+                />
               </React.Fragment>
             ))}
           </List>

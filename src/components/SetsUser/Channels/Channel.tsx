@@ -15,6 +15,7 @@ import { ChatContext } from "../../../Context/ChatContext";
 
 interface IProps {
   isOpenLeftBar: boolean;
+  setIsOpenLeftBar: React.Dispatch<React.SetStateAction<boolean>>;
   channel: DocumentData;
 }
 
@@ -30,7 +31,7 @@ type TTheme = {
 };
 
 export const Channel = (props: IProps) => {
-  const { channel, isOpenLeftBar } = props;
+  const { channel, isOpenLeftBar, setIsOpenLeftBar } = props;
   const {
     allDm,
     allChannels,
@@ -121,6 +122,9 @@ export const Channel = (props: IProps) => {
     }
     setActiveChannelId(channel.uid);
     setActiveDirectMessageId(null);
+    if (window.innerWidth < 610) {
+      setIsOpenLeftBar(false);
+    }
   }
 
   if (
@@ -140,6 +144,7 @@ export const Channel = (props: IProps) => {
               background: theme.palette.action.active,
             },
           },
+          justifyContent: "center",
         }}
         onClick={handleClick}
         selected={activeChannelId === channel.uid && true}

@@ -4,8 +4,8 @@
   grid-auto-rows: minmax(20px, auto)
   align-items: start
   grid-template-areas: "icon messager" "icon message"
-  width: 55%
-  padding: 0px 6px
+  // width: 55%
+  width: 64%
 
   .container__message 
     display: grid
@@ -80,3 +80,12 @@
     grid-area: status
     font-size: 11px
     align-self: start
+
+.container-text 
+  display: grid
+  grid-template-columns: 44px 1fr
+  grid-auto-rows: minmax(20px, auto)
+  align-items: start
+  grid-template-areas: ". message"
+  // width: 55%
+  width: 64%

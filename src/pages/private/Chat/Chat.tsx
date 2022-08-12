@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useState } from "react";
+import { memo, useCallback, useEffect, useState, useLayoutEffect } from "react";
 import {
   collection,
   onSnapshot,
@@ -26,6 +26,7 @@ import getTheme from "../../../components/Theme/base";
 import { ThemeProvider } from "@mui/material/styles";
 import { ChatContext } from "../../../Context/ChatContext";
 import { IChatContext } from "../../../Context/Models/IChatContext";
+import "./chat.sass";
 
 export const Chat = memo(() => {
   const currentTheme = localStorage.getItem("appTheme") || "light";
@@ -40,11 +41,11 @@ export const Chat = memo(() => {
   const [modalAddPeopleIsOpen, setModalAddPeopleIsOpen] = useState(false);
   const [isErrorInPopap, setIsErrorInPopap] = useState(false);
   const [isOpenLeftBar, setIsOpenLeftBar] = useState(true);
-  const [show, setShow] = useState(false);
   const [styles, setStyles] = useState<IStyles>({});
   const [modalAddChannelIsOpen, setModalAddChannelIsOpen] =
     useState<boolean>(false);
   const [modalAddDmIsOpen, setModalAddDmIsOpen] = useState<boolean>(false);
+  const [conversation, setConversation] = useState<null | JSX.Element>(null);
   const theme = getTheme(themeName);
   const firestore = useFirestore();
   const [authId, setAuthId] = useState<string | null>(null);
@@ -149,20 +150,28 @@ export const Chat = memo(() => {
     return unsubscribe();
   }, [firestore, modalAddDmIsOpen, authId]);
 
-  useEffect(() => {
-    showConversation();
-  }, [activeChannelId, activeDirectMessageId]);
+  useLayoutEffect(() => {
+    function updateSize() {
+      if (!isOpenLeftBar || window.innerWidth > 609) {
+        showConversation(true);
+      } else {
+        showConversation(false);
+      }
+    }
+    window.addEventListener("resize", updateSize);
+    updateSize();
+    return () => window.removeEventListener("resize", updateSize);
+  }, [isOpenLeftBar, window.innerWidth]);
 
   useEffect(() => {
     if ((allChannels || allDm) && (activeChannelId || activeDirectMessageId)) {
-      setShow(true);
+      showConversation(true);
     } else {
-      setShow(false);
+      showConversation(false);
     }
   }, [activeChannelId, activeDirectMessageId, allChannels, allDm]);
 
   async function offlineInDM() {
-    console.log("offlineInDM");
     const activeChatId = activeChannelId
       ? activeChannelId
       : activeDirectMessageId;
@@ -191,17 +200,11 @@ export const Chat = memo(() => {
           return b;
         }
       );
-      console.log(isUpdateDoc);
       if (isUpdateDoc !== undefined) {
         await updateDoc(chatRef, { badge: chatWithNewBadge });
       }
     }
   }
-
-  // window.onunload = function () {
-  //   console.log("onunload");
-  //   offlineInDM();
-  // };
 
   async function changeOnline(isOnline: boolean) {
     if (authId) {
@@ -224,18 +227,21 @@ export const Chat = memo(() => {
     return () => markAsOffline();
   }, [authId]);
 
-  const showConversation = useCallback(() => {
-    if (show) {
-      return (
-        <Conversation
-          isErrorInPopap={isErrorInPopap}
-          setIsErrorInPopap={setIsErrorInPopap}
-        />
-      );
-    }
+  const showConversation = useCallback(
+    (show: boolean) => {
+      if (show) {
+        return setConversation(
+          <Conversation
+            isErrorInPopap={isErrorInPopap}
+            setIsErrorInPopap={setIsErrorInPopap}
+          />
+        );
+      }
 
-    return null;
-  }, [show]);
+      return setConversation(null);
+    },
+    [isOpenLeftBar, window.innerWidth]
+  );
 
   if (!allUsers || !authId) {
     return <Loader />;
@@ -272,7 +278,12 @@ export const Chat = memo(() => {
       <CustomThemeContext.Provider value={contextValue}>
         <ThemeProvider theme={theme}>
           <Box data-testid="chat" style={styles.root}>
-            <Grid container spacing={2} style={styles.workSpace}>
+            <Grid
+              container
+              spacing={2}
+              className="workSpace"
+              style={styles.workSpace}
+            >
               <CssBaseline />
               <Grid item xs={12} style={styles.header}>
                 <Header
@@ -287,7 +298,7 @@ export const Chat = memo(() => {
                 setIsOpenLeftBar={setIsOpenLeftBar}
               />
               <Box component="main" sx={styles.conversation}>
-                <main>{showConversation()}</main>
+                <main>{conversation}</main>
               </Box>
             </Grid>
           </Box>

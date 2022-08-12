@@ -24,6 +24,7 @@ import {
 import { VisibilityOff, Visibility } from "@mui/icons-material";
 import firebaseStore from "../../../common/firebaseStore";
 import { AuthLoader } from "../../../components/Helpers/Loader";
+import "../auth-body.sass";
 
 const useStyles = makeStyles((theme) => ({
   label: {
@@ -135,7 +136,7 @@ export const SignInPage = () => {
           id="email"
           name="email"
           label="Email"
-          style={{ width: "33.7vw", margin: "2vh 1vw" }}
+          style={{ width: "-webkit-fill-available", margin: "2vh 1vw" }}
           variant="standard"
           value={formik.values.email}
           onChange={formik.handleChange}
@@ -152,7 +153,7 @@ export const SignInPage = () => {
       </Box>
       <Box>
         <FormControl
-          style={{ width: "33.7vw", margin: "2vh 0vw" }}
+          style={{ width: "-webkit-fill-available", margin: "2vh 0vw" }}
           error={formik.touched.password && Boolean(formik.errors.password)}
         >
           <InputLabel style={{ margin: "0px 8px" }}>Password</InputLabel>
@@ -160,7 +161,11 @@ export const SignInPage = () => {
             id="password"
             name="password"
             inputProps={{ "data-testid": "login-password-input" }}
-            style={{ width: "33.7vw", marginLeft: 14, marginTop: 10 }}
+            style={{
+              width: "-webkit-fill-available",
+              marginLeft: 14,
+              marginTop: 10,
+            }}
             type={showPassword ? "text" : "password"}
             value={formik.values.password}
             error={formik.touched.password && Boolean(formik.errors.password)}
@@ -190,7 +195,7 @@ export const SignInPage = () => {
           size="small"
           variant="contained"
           style={{
-            width: "33.7vw",
+            width: "-webkit-fill-available",
             margin: "2vh 1vw",
             color: "black",
             background: "white",
@@ -202,16 +207,12 @@ export const SignInPage = () => {
           Google
         </Button>
       </Box>
-      <Box style={{ display: "flex", justifyContent: "space-evenly" }}>
+      <Box className="auth-buttons">
         <Button
           data-testid="button-login"
           size="small"
           variant="contained"
-          style={{
-            width: "13vw",
-            margin: "15px 0px",
-            color: "black",
-          }}
+          className="sign-handle-button"
           type="submit"
         >
           Enter
@@ -224,6 +225,7 @@ export const SignInPage = () => {
             textDecoration: "none",
             alignSelf: "center",
             color: "#0000b5",
+            margin: 8,
           }}
         >
           Are you is`nt registered?

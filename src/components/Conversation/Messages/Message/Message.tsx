@@ -10,6 +10,7 @@ import { Box } from "@mui/material";
 import MessageHeader from "./MessageHeader";
 import MessageText from "./MessageText";
 import MessageReplyOn from "./MessageReplyOn";
+import MessageWithoutHeader from "./MessageWithoutHeader";
 import { IMapedMessage } from "../../Models/IMessage";
 import "./reply-message.sass";
 import "./message.sass";
@@ -94,9 +95,7 @@ const Message = memo(
                 className={classMessage}
                 style={{
                   margin:
-                    authId === m.senderId
-                      ? "6px 0px 0px 35px"
-                      : "6px 0px 0px 243px",
+                    authId === m.senderId ? "6px 0px 0px 6%" : "6px 6% 0px 30%",
                 }}
                 id={m.id}
               >
@@ -126,7 +125,7 @@ const Message = memo(
                 )}
               </Box>
             ) : (
-              <MessageText
+              <MessageWithoutHeader
                 status={m.status}
                 time={{
                   data: m.updatedAt || m.createdAt,
@@ -135,7 +134,7 @@ const Message = memo(
                 position={position}
                 text={m.text}
                 senderId={m.senderId}
-                className={"message-text"}
+                className="message-text"
               />
             )}
           </Box>

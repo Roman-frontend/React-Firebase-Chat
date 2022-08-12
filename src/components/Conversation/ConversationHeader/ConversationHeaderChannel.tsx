@@ -100,7 +100,13 @@ export const ConversationHeaderChannel = ({
   };
 
   return (
-    <div style={{ background: theme.palette.primary.main }}>
+    <div
+      style={{
+        background: theme.palette.primary.main,
+        position: "absolute",
+        width: "inherit",
+      }}
+    >
       <Grid
         container
         spacing={1}
@@ -114,7 +120,8 @@ export const ConversationHeaderChannel = ({
           item
           xs={8}
           style={{
-            height: "inherit",
+            position: "relative",
+            top: 4,
             padding: "0vw 1.5vw",
             margin: "0vw 0.5vw",
             cursor: "pointer",
@@ -141,6 +148,7 @@ export const ConversationHeaderChannel = ({
             alignSelf: "center",
             flexBasis: "min-content",
             margin: "0px 8px",
+            maxWidth: "27%",
           }}
         >
           <Members

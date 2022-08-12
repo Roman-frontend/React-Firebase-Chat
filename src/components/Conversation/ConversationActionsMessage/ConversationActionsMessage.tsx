@@ -21,8 +21,10 @@ import ReplyIcon from "@mui/icons-material/Reply";
 import EditIcon from "@mui/icons-material/Edit";
 import ForwardIcon from "@mui/icons-material/Forward";
 import DeleteIcon from "@mui/icons-material/Delete";
+import CancelIcon from "@mui/icons-material/Cancel";
 import { ChatContext } from "../../../Context/ChatContext";
 import { IMapedMessage } from "../Models/IMessage";
+import "./conversation-actions-message.sass";
 
 interface IProps {
   inputRef: MutableRefObject<HTMLInputElement | null>;
@@ -33,8 +35,6 @@ interface IProps {
   popupMessage: null | IMapedMessage;
   changeMessageRef: null | MutableRefObject<DocumentData | null>;
 }
-
-const stylesButton = { margin: 1 /* border: '1px solid rebeccapurple' */ };
 
 export function ConversationActionsMessage(props: IProps) {
   const {
@@ -113,64 +113,84 @@ export function ConversationActionsMessage(props: IProps) {
   return (
     <Box
       sx={{
-        background: theme.palette.primary.main,
+        background: theme.palette.primary.light,
         maxWidth: "initial",
       }}
-      style={{ display: openPopup ? "initial" : "none" }}
+      style={{
+        display: openPopup ? "initial" : "none",
+        position: "absolute",
+        bottom: 0,
+        left: 0,
+        width: "inherit",
+      }}
     >
-      <Button
-        sx={stylesButton}
-        size="small"
-        variant="contained"
-        color="primary"
-        startIcon={<ReplyIcon />}
-        onClick={handleAnswer}
+      <Box
+        style={{
+          margin: "0% 6%",
+          background: theme.palette.primary.main,
+          borderRadius: "0px 24px 0px 0px",
+          boxShadow:
+            "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.01)",
+          height: 56,
+        }}
       >
-        ANSWER
-      </Button>
-      {popupMessage && popupMessage.senderId === authId && (
         <Button
-          sx={stylesButton}
+          className="action-buttons"
           size="small"
           variant="contained"
-          color="primary"
-          startIcon={<EditIcon />}
-          onClick={handleChange}
+          color="info"
+          startIcon={<ReplyIcon className="action-buttons-icon" />}
+          onClick={handleAnswer}
         >
-          EDIT
+          ANSWER
         </Button>
-      )}
-      <Button
-        sx={stylesButton}
-        size="small"
-        variant="contained"
-        color="primary"
-        startIcon={<ForwardIcon />}
-        onClick={() => setOpenPopup("")}
-      >
-        FORWARD
-      </Button>
-      {popupMessage && popupMessage.senderId === authId && (
+        {popupMessage && popupMessage.senderId === authId && (
+          <Button
+            className="action-buttons"
+            size="small"
+            variant="contained"
+            color="info"
+            startIcon={<EditIcon className="action-buttons-icon" />}
+            onClick={handleChange}
+          >
+            EDIT
+          </Button>
+        )}
         <Button
-          sx={stylesButton}
+          className="action-buttons"
           size="small"
           variant="contained"
-          color="error"
-          startIcon={<DeleteIcon />}
-          onClick={handleDelete}
+          color="info"
+          startIcon={<ForwardIcon className="action-buttons-icon" />}
+          onClick={() => setOpenPopup("")}
         >
-          DELETE
+          FORWARD
         </Button>
-      )}
-      <Button
-        sx={stylesButton}
-        size="small"
-        variant="contained"
-        color="info"
-        onClick={handleCancel}
-      >
-        CANCEL
-      </Button>
+        {popupMessage && popupMessage.senderId === authId && (
+          <Button
+            style={{ color: "white" }}
+            className="action-buttons"
+            size="small"
+            variant="contained"
+            color="error"
+            startIcon={<DeleteIcon className="action-buttons-icon" />}
+            onClick={handleDelete}
+          >
+            DELETE
+          </Button>
+        )}
+        <Button
+          style={{ color: "white" }}
+          className="action-buttons"
+          size="small"
+          variant="contained"
+          color="warning"
+          startIcon={<CancelIcon className="action-buttons-icon" />}
+          onClick={handleCancel}
+        >
+          CANCEL
+        </Button>
+      </Box>
     </Box>
   );
 }

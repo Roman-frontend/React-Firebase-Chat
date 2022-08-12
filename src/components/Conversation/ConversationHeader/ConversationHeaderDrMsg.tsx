@@ -37,7 +37,14 @@ export const ConversationHeaderDrMsg = () => {
   };
 
   return (
-    <div style={{ background: theme.palette.primary.main, marginLeft: 8 }}>
+    <div
+      style={{
+        background: theme.palette.primary.main,
+        marginLeft: 8,
+        position: "absolute",
+        width: "inherit",
+      }}
+    >
       <Grid
         container
         spacing={1}

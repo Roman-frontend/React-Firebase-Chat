@@ -6,6 +6,7 @@ import {
   updateDoc,
   setDoc,
 } from "firebase/firestore";
+import { useTheme } from "@mui/material/styles";
 import { useTranslation } from "react-i18next";
 import { useFirestore } from "reactfire";
 import { nanoid } from "nanoid";
@@ -13,6 +14,7 @@ import { makeStyles } from "@mui/styles";
 import BorderColorIcon from "@mui/icons-material/BorderColor";
 import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Grid";
+import { Box } from "@mui/system";
 import { ChatContext } from "../../../Context/ChatContext";
 
 interface IProps {
@@ -32,6 +34,7 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     fontSize: "3rem",
     textAlign: "right",
+    margin: "0px 6%",
   },
 }));
 
@@ -47,6 +50,7 @@ export const InputUpdateMessages = memo((props: IProps) => {
   } = props;
   const { activeChannelId, activeDirectMessageId, authId, allDm, allChannels } =
     useContext(ChatContext);
+  const theme = useTheme();
   const { t } = useTranslation();
   const firestore = useFirestore();
   const classes = useStyles();
@@ -55,6 +59,11 @@ export const InputUpdateMessages = memo((props: IProps) => {
   function inputUpdateMessages(event: React.KeyboardEvent<HTMLInputElement>) {
     event.preventDefault();
     const value = inputRef?.current?.value || "";
+
+    // if (event.shiftKey && event.key === "Enter") {
+    //   setHeight((prev) => prev + 20);
+    // }
+    console.log(inputRef?.current?.value);
 
     //event.shiftKey - містить значення true - коли користувач нажме деякі з клавіш утримуючи shift
     if (value.trim() !== "" && !event.shiftKey && event.key === "Enter") {
@@ -188,16 +197,36 @@ export const InputUpdateMessages = memo((props: IProps) => {
   }
 
   return (
-    <div className={classes.root} id="mainInput">
+    <div
+      className={classes.root}
+      style={{
+        position: "relative",
+        background: theme.palette.primary.main,
+        borderRadius: "0px 24px 0px 0px",
+        boxShadow:
+          "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.01)",
+      }}
+      id="mainInput"
+    >
       <Grid container spacing={1}>
-        <Grid item xs={1}>
+        <Grid item xs={1} style={{ alignSelf: "self-end" }}>
           <BorderColorIcon
             style={{ fontSize: 40, top: "1rem", textAlign: "center" }}
           />
         </Grid>
         <Grid item xs={11}>
           <TextField
-            inputProps={{ "data-testid": "on-key-up-main-input" }}
+            maxRows={5}
+            multiline={true}
+            inputProps={{
+              "data-testid": "on-key-up-main-input",
+              // style: {
+              //   // position: "absolute",
+              //   // bottom: 1,
+              //   // padding: 10,
+              //   // maxLines: "none",
+              // },
+            }}
             value={inputText}
             label={t("description.inputMain")}
             variant="standard"
@@ -210,9 +239,9 @@ export const InputUpdateMessages = memo((props: IProps) => {
               inputUpdateMessages(event)
             }
             sx={{
-              paddingRight: "6vw",
               width: "-webkit-fill-available",
             }}
+            color="secondary"
           />
         </Grid>
       </Grid>
