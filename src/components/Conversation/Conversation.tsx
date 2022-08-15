@@ -11,6 +11,7 @@ import { ConversationInputHeader } from "./ConversationInputHeader/ConversationI
 import { ConversationActionsMessage } from "./ConversationActionsMessage/ConversationActionsMessage";
 import imageError from "../../images/error.png";
 import { IMapedMessage } from "./Models/IMessage";
+import "./conversation.sass";
 
 interface IProps {
   isErrorInPopap: boolean;
@@ -94,13 +95,7 @@ export default function Conversation(props: IProps) {
   return (
     <Box
       data-testid="conversation-main-block"
-      style={{
-        position: "relative",
-        bottom: 2,
-        maxHeight: "75%",
-        height: 500,
-        width: "-webkit-fill-available",
-      }}
+      className="conversation-main-div"
     >
       {setHeader()}
       <Box

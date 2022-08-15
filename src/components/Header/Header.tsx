@@ -20,6 +20,7 @@ import { MaterialUISwitch } from "./HeaderStyles";
 import { CustomThemeContext } from "../../Context/AppContext";
 import imageProfile from "../../images/User-Icon.png";
 import "tippy.js/dist/tippy.css";
+import "./header.sass";
 import "../../i18n";
 
 interface IProps {
@@ -81,7 +82,12 @@ const Header = memo((props: IProps) => {
   };
 
   return (
-    <Grid container spacing={1} style={{ justifyContent: "space-between" }}>
+    <Grid
+      container
+      spacing={1}
+      className="header-main"
+      style={{ justifyContent: "space-between" }}
+    >
       <AppBar
         color="primary"
         sx={{
@@ -94,6 +100,7 @@ const Header = memo((props: IProps) => {
       >
         <Toolbar style={{ justifyContent: "space-between" }}>
           <Grid
+            className="header-left-bar-icon-with-title"
             style={{
               display: "flex",
               width: "-webkit-fill-available",
@@ -101,18 +108,25 @@ const Header = memo((props: IProps) => {
             }}
           >
             <IconButton
+              className="header-left-bar-icon"
               onClick={() => setIsOpenLeftBar(!isOpenLeftBar)}
               edge="start"
             >
               <MenuIcon />
             </IconButton>
-            <Grid item xs={9} style={{ flexBasis: "auto" }}>
+            <Grid
+              item
+              xs={9}
+              className="header-title"
+              style={{ flexBasis: "auto" }}
+            >
               <Typography variant="h6" noWrap component="div">
                 {t("description.header")}
               </Typography>
             </Grid>
           </Grid>
           <Grid
+            className="header-right-grid-section"
             style={{
               display: "flex",
               width: "-webkit-fill-available",

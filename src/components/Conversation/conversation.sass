@@ -1,0 +1,34 @@
+$breackpoint-width_xxl: 610px
+$breackpoint-height_xxl: 576px
+$breackpoint-height_sm: 350px
+$conversation-height: calc(100vh - 84px)
+  
+.conversation-main-div
+  position: relative
+  bottom: 2px
+  max-height: 75%
+  height: $conversation-height
+  width: -webkit-fill-available
+
+@media (min-width: $breackpoint-width_xxl) 
+  .conversation-main-div
+    position: relative
+    bottom: 2px
+    max-height: 75%
+    height: $conversation-height
+    width: -webkit-fill-available
+
+@media (min-height: $breackpoint-height_xxl) 
+  .conversation-main-div
+    position: relative
+    bottom: 2px
+    max-height: 75%
+    height: 500px
+    width: -webkit-fill-available
+
+@media (max-height: $breackpoint-height_sm) 
+  .conversation-main-div
+    position: relative
+    bottom: 2px
+    min-height: 300px
+    width: -webkit-fill-available

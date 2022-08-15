@@ -1,8 +1,22 @@
+$breackpoint-height_xxl: 576px
+$breackpoint-height_sm: 350px
+  
 .workSpace
-  min-width: 550px
   max-width: 900px
   max-height: 600px
   box-shadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)"
-  
 
+.chat-main
+  height: 100vh
+  overflow-y: hidden
+
+@media (min-height: $breackpoint-height_xxl) 
+  .chat-main
+    height: 100vh
+    overflow-y: hidden
+
+@media (max-height: $breackpoint-height_sm) 
+  .chat-main
+    min-height: min-content
+    overflow-y: scroll
     

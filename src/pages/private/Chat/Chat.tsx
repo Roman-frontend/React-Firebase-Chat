@@ -152,7 +152,10 @@ export const Chat = memo(() => {
 
   useLayoutEffect(() => {
     function updateSize() {
-      if (!isOpenLeftBar || window.innerWidth > 609) {
+      if (
+        (!isOpenLeftBar || window.innerWidth > 609) &&
+        (activeChannelId || activeDirectMessageId)
+      ) {
         showConversation(true);
       } else {
         showConversation(false);
@@ -161,7 +164,12 @@ export const Chat = memo(() => {
     window.addEventListener("resize", updateSize);
     updateSize();
     return () => window.removeEventListener("resize", updateSize);
-  }, [isOpenLeftBar, window.innerWidth]);
+  }, [
+    isOpenLeftBar,
+    window.innerWidth,
+    activeChannelId,
+    activeDirectMessageId,
+  ]);
 
   useEffect(() => {
     if ((allChannels || allDm) && (activeChannelId || activeDirectMessageId)) {
@@ -277,7 +285,7 @@ export const Chat = memo(() => {
     <ChatContext.Provider value={chatContextValue}>
       <CustomThemeContext.Provider value={contextValue}>
         <ThemeProvider theme={theme}>
-          <Box data-testid="chat" style={styles.root}>
+          <Box data-testid="chat" className="chat-main" style={styles.root}>
             <Grid
               container
               spacing={2}

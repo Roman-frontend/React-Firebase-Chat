@@ -10,7 +10,6 @@ export default function setStylesChat(theme: ITheme) {
       display: "flex",
       alignItems: "center",
       flexFlow: "column",
-      height: "100vh",
       lineHeight: "normal",
       background: "#dfe0f7",
       backgroundImage: `url(${backgroundImage})`,
@@ -23,7 +22,6 @@ export default function setStylesChat(theme: ITheme) {
     },
     header: { paddingLeft: 8 },
     conversation: {
-      height: 520,
       flexGrow: 1,
       p: "20px 0px 0px 0px",
       backgroundColor: theme.palette.primary.light,

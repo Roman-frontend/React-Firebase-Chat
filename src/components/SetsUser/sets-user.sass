@@ -1,4 +1,7 @@
-$breackpoint_xxl: 900px
+$breackpoint-height_xxl: 600px
+$breackpoint-width_xxl: 610px
+$breackpoint-height_sm: 350px
+$sets-user-height: calc(100vh - 72px)
   
 .main
   border-right: solid 1px
@@ -6,6 +9,22 @@ $breackpoint_xxl: 900px
   margin: 10px 0px
   overflow-y: scroll
 
-@media (max-width: $breackpoint_xxl) 
-  // .workSpace 
-  //   max-width: 700px
+@media (max-height: $breackpoint-height_xxl) 
+  .main
+    border-right: solid 1px
+    margin: 10px 0px
+    overflow-y: auto
+    height: $sets-user-height
+
+@media (max-width: $breackpoint-width_xxl) 
+  .main
+    border-right: solid 1px
+    margin: 10px 0px
+    overflow-y: auto
+
+@media (max-height: $breackpoint-height_sm) 
+  .main
+    border-right: solid 1px
+    margin: 10px 0px
+    overflow-y: auto
+    min-height: 300px

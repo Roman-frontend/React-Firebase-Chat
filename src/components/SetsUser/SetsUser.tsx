@@ -22,24 +22,26 @@ export default function SetsUser(props: IProps) {
   const { modalAddPeopleIsOpen, modalAddDmIsOpen, modalAddChannelIsOpen } =
     useContext(ChatContext);
   const [adaptiveStyles, setAdaptiveStyles] = useState<{
-    minWidth?: number | string;
-    width?: number;
+    minWidth?: number;
+    maxWidth?: number | string;
+    width?: number | string;
+    display?: string;
   }>({
-    minWidth: window.innerWidth < 610 && isOpenLeftBar ? 610 : 0,
+    maxWidth: window.innerWidth < 610 && isOpenLeftBar ? 610 : 0,
   });
 
   useLayoutEffect(() => {
     function updateSize() {
       if (window.innerWidth < 610 && isOpenLeftBar) {
-        setAdaptiveStyles({ minWidth: "-webkit-fill-available" });
+        setAdaptiveStyles({ width: "-webkit-fill-available" });
       } else if (window.innerWidth < 610 && !isOpenLeftBar) {
         setAdaptiveStyles({ width: 0 });
       } else if (window.innerWidth < 800 && isOpenLeftBar) {
-        setAdaptiveStyles({ minWidth: 200 });
+        setAdaptiveStyles({ maxWidth: 200 });
       } else if (!isOpenLeftBar) {
         setAdaptiveStyles({ minWidth: 0 });
       } else {
-        setAdaptiveStyles({ minWidth: 260 });
+        setAdaptiveStyles({ maxWidth: 260 });
       }
     }
     window.addEventListener("resize", updateSize);
