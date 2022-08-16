@@ -19,7 +19,6 @@ import HeaderProfile from "./HeaderProfile/HeaderProfile";
 import { MaterialUISwitch } from "./HeaderStyles";
 import { CustomThemeContext } from "../../Context/AppContext";
 import imageProfile from "../../images/User-Icon.png";
-import "tippy.js/dist/tippy.css";
 import "./header.sass";
 import "../../i18n";
 

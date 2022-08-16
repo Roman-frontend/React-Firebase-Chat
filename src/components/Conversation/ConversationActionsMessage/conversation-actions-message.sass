@@ -2,6 +2,7 @@ $breackpoint_xxl: 850px
 $breackpoint_xl: 730px
 $breackpoint_xll: 609px
 $breackpoint_l: 550
+$breackpoint_md: 460px
 $breackpoint_small: 400px
 
 .action-buttons
@@ -36,6 +37,16 @@ $breackpoint_small: 400px
 
   .action-buttons-icon
     font-size: 24px !important
+
+@media (max-width: $breackpoint_md) 
+  .action-buttons
+    min-width: 50px !important
+    margin: 6px !important
+    font-size: 0px !important
+
+  .action-buttons-icon
+    font-size: 24px !important
+    margin: 0px !important
 
 @media (max-width: $breackpoint_small) 
   .action-buttons

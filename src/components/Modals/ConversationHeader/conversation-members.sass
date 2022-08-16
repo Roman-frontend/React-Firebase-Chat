@@ -1,0 +1,18 @@
+$breackpoint-width_xxl: 464px
+$channel-members-width: calc(100vw - 32px)
+$channel-members-search-width: calc(100vw - 96px)
+
+.channel-members-main
+
+.channel-members-search
+  min-width: 350px
+  margin: 0px 25px
+
+@media (max-width: $breackpoint-width_xxl) 
+  .channel-members-main
+    width: $channel-members-width
+
+  .channel-members-search
+    width: $channel-members-search-width
+    margin: 0px 16px
+    min-width: 0px

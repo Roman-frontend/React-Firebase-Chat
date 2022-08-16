@@ -6,6 +6,7 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import Select from "react-select";
 import { ChatContext } from "../../../Context/ChatContext";
+import "./select-people.sass";
 
 interface IProps {
   isDialogChanged?: boolean;
@@ -21,6 +22,7 @@ interface IItemRenderer extends DocumentData {
 
 const selectStyles: any = {
   menu: () => ({
+    color: "black",
     overflowY: "scroll",
     background: "white",
   }),
@@ -37,14 +39,6 @@ export const SelectPeople = (props: IProps) => {
       setList(notInvitedRef?.map((user) => ({ ...user, label: user.email })));
     }
   }, [notInvitedRef]);
-
-  const styles = {
-    root: {
-      minWidth: 400,
-      minHeight: 50,
-      maxHeight: 300,
-    },
-  };
 
   function todo() {
     done("done", invited /* invitedRef.current */);
@@ -68,7 +62,7 @@ export const SelectPeople = (props: IProps) => {
   };
 
   return (
-    <div style={styles.root}>
+    <div className="select-people_main">
       <div>
         <Select
           styles={selectStyles}
@@ -97,6 +91,9 @@ export const SelectPeople = (props: IProps) => {
           position: "absolute",
           bottom: 0,
           padding: 0,
+          width: "-webkit-fill-available",
+          textAlign: "center",
+          left: 0,
         }}
       >
         <FormControl>
@@ -112,7 +109,7 @@ export const SelectPeople = (props: IProps) => {
             <Button
               size="small"
               variant="contained"
-              color="secondary"
+              color="primary"
               onClick={todo}
             >
               Add

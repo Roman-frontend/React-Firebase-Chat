@@ -9,6 +9,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { AddPeopleToChannel } from "../../Modals/AddPeopleToChannel/AddPeopleToChannel";
 import { CreateListMembers } from "./CreateListMembers";
 import { ChatContext } from "../../../Context/ChatContext";
+import "./conversation-members.sass";
 
 export const ConversationMembers = (props) => {
   const {
@@ -38,7 +39,7 @@ export const ConversationMembers = (props) => {
   }
 
   return (
-    <div className="set-channel">
+    <div className="channel-members-main">
       <Dialog
         sx={{
           position: "absolute",
@@ -53,28 +54,31 @@ export const ConversationMembers = (props) => {
         aria-labelledby="form-dialog-title"
       >
         <Box style={{ textAlign: "center" }}>
-          <DialogTitle id="form-dialog-title">{title}</DialogTitle>
+          <DialogTitle id="form-dialog-title" style={{ padding: 8 }}>
+            {title}
+          </DialogTitle>
         </Box>
         <Box style={{ textAlign: "center" }}>
           <Button
             color="warning"
             variant="text"
+            style={{ padding: 0 }}
             onClick={() => setModalAddPeopleIsOpen(true)}
           >
             Add people
           </Button>
         </Box>
-        <Box>
+        <Box className="channel-members-search">
           <TextField
             autoFocus
             color="secondary"
             variant="standard"
             label="Search people"
-            style={{ minWidth: "350px", margin: "0px 25px" }}
+            style={{ width: "-webkit-fill-available" }}
             onChange={(event) => handleInput(event)}
           />
         </Box>
-        <DialogContent>
+        <DialogContent style={{ padding: "8px 14px" }}>
           <CreateListMembers activeChannel={activeChannel} search={search} />
         </DialogContent>
       </Dialog>

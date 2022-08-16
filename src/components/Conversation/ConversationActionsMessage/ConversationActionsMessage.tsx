@@ -16,6 +16,7 @@ import { useFirestore } from "reactfire";
 import { nanoid } from "nanoid";
 import { useTheme } from "@mui/material/styles";
 import { Box } from "@mui/system";
+import { makeStyles } from "@mui/styles";
 import Button from "@mui/material/Button";
 import ReplyIcon from "@mui/icons-material/Reply";
 import EditIcon from "@mui/icons-material/Edit";
@@ -36,6 +37,12 @@ interface IProps {
   changeMessageRef: null | MutableRefObject<DocumentData | null>;
 }
 
+const useStyles = makeStyles((theme) => ({
+  icon: {
+    margin: 0,
+  },
+}));
+
 export function ConversationActionsMessage(props: IProps) {
   const {
     openPopup,
@@ -48,6 +55,7 @@ export function ConversationActionsMessage(props: IProps) {
   } = props;
   const { authId, activeChannelId, activeDirectMessageId } =
     useContext(ChatContext);
+  const classes = useStyles();
   const theme = useTheme();
   const firestore = useFirestore();
   const [focusRootInput, setFocusRootInput] = useState<string | null>(null);
@@ -135,6 +143,7 @@ export function ConversationActionsMessage(props: IProps) {
         }}
       >
         <Button
+          classes={{ startIcon: classes.icon }}
           className="action-buttons"
           size="small"
           variant="contained"
@@ -146,6 +155,7 @@ export function ConversationActionsMessage(props: IProps) {
         </Button>
         {popupMessage && popupMessage.senderId === authId && (
           <Button
+            classes={{ startIcon: classes.icon }}
             className="action-buttons"
             size="small"
             variant="contained"
@@ -157,6 +167,7 @@ export function ConversationActionsMessage(props: IProps) {
           </Button>
         )}
         <Button
+          classes={{ startIcon: classes.icon }}
           className="action-buttons"
           size="small"
           variant="contained"
@@ -169,6 +180,7 @@ export function ConversationActionsMessage(props: IProps) {
         {popupMessage && popupMessage.senderId === authId && (
           <Button
             style={{ color: "white" }}
+            classes={{ startIcon: classes.icon }}
             className="action-buttons"
             size="small"
             variant="contained"
@@ -181,6 +193,7 @@ export function ConversationActionsMessage(props: IProps) {
         )}
         <Button
           style={{ color: "white" }}
+          classes={{ startIcon: classes.icon }}
           className="action-buttons"
           size="small"
           variant="contained"

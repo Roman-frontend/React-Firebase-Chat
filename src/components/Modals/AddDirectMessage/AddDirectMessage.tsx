@@ -68,6 +68,7 @@ export const AddDirectMessage = withStyles(styles)((props: IProps) => {
       >
         <DialogTitle
           id="form-dialog-title"
+          style={{ textAlign: "center" }}
           classes={{ root: classes.titleRoot }}
         >
           Add direct message

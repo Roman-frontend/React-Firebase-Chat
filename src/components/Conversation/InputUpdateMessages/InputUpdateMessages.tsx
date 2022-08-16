@@ -11,11 +11,12 @@ import { useTranslation } from "react-i18next";
 import { useFirestore } from "reactfire";
 import { nanoid } from "nanoid";
 import { makeStyles } from "@mui/styles";
-import BorderColorIcon from "@mui/icons-material/BorderColor";
+import SendIcon from "@mui/icons-material/Send";
 import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Grid";
 import { Box } from "@mui/system";
 import { ChatContext } from "../../../Context/ChatContext";
+import { Button } from "@mui/material";
 
 interface IProps {
   changeMessageRef: null | React.MutableRefObject<DocumentData | null>;
@@ -58,15 +59,16 @@ export const InputUpdateMessages = memo((props: IProps) => {
 
   function inputUpdateMessages(event: React.KeyboardEvent<HTMLInputElement>) {
     event.preventDefault();
-    const value = inputRef?.current?.value || "";
-
-    // if (event.shiftKey && event.key === "Enter") {
-    //   setHeight((prev) => prev + 20);
-    // }
-    console.log(inputRef?.current?.value);
 
     //event.shiftKey - містить значення true - коли користувач нажме деякі з клавіш утримуючи shift
-    if (value.trim() !== "" && !event.shiftKey && event.key === "Enter") {
+    if (!event.shiftKey && event.key === "Enter") {
+      handleSend();
+    }
+  }
+
+  function handleSend() {
+    const value = inputRef?.current?.value || "";
+    if (value.trim() !== "") {
       if (closeBtnChangeMsg) changeMessageText(value);
       // else if (closeBtnReplyMsg) messageInReply(value);
       else newMessage(value);
@@ -209,11 +211,6 @@ export const InputUpdateMessages = memo((props: IProps) => {
       id="mainInput"
     >
       <Grid container spacing={1}>
-        <Grid item xs={1} style={{ alignSelf: "self-end" }}>
-          <BorderColorIcon
-            style={{ fontSize: 40, top: "1rem", textAlign: "center" }}
-          />
-        </Grid>
         <Grid item xs={11}>
           <TextField
             maxRows={5}
@@ -242,6 +239,30 @@ export const InputUpdateMessages = memo((props: IProps) => {
               width: "-webkit-fill-available",
             }}
             color="secondary"
+          />
+        </Grid>
+        <Grid
+          onClick={handleSend}
+          item
+          xs={1}
+          style={{
+            alignSelf: "self-end",
+            cursor: "pointer",
+            padding: 0,
+            textAlign: "left",
+          }}
+        >
+          <SendIcon
+            sx={{
+              "&:hover": {
+                color: theme.palette.primary.contrastText,
+              },
+            }}
+            style={{
+              fontSize: 40,
+              top: "1rem",
+              textAlign: "center",
+            }}
           />
         </Grid>
       </Grid>

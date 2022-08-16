@@ -24,6 +24,7 @@ import DialogContentText from "@mui/material/DialogContentText";
 import { useTheme } from "@mui/material/styles";
 import firebaseStore from "../../../common/firebaseStore";
 import { SelectPeople } from "../SelectPeople/SelectPeople";
+import "./add-channel.sass";
 
 interface IProps {
   setModalAddChannelIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -37,18 +38,6 @@ interface IForm {
   discription: string;
   isPrivate: boolean;
 }
-
-const useStyles = makeStyles((theme) => ({
-  dialogPaper: {
-    minWidth: "520px",
-    minHeight: "380px",
-    margin: 0,
-  },
-  input: {
-    height: "30px",
-    width: "220px",
-  },
-}));
 
 const helperTextStyles = makeStyles((theme) => ({
   root: {
@@ -66,7 +55,6 @@ export const AddChannel = (props: IProps) => {
   } = props;
   const firestore = useFirestore();
   const auth = getAuth();
-  const popapClasses = useStyles();
   const helperTestClasses = helperTextStyles();
   const { enqueueSnackbar } = useSnackbar();
   const [isPrivate, setIsPrivate] = useState(false);
@@ -181,11 +169,15 @@ export const AddChannel = (props: IProps) => {
         open={modalAddChannelIsOpen}
         onClose={() => setModalAddChannelIsOpen(false)}
         scroll="body"
-        classes={{ paper: popapClasses.dialogPaper }}
+        className="add-channel_main"
         sx={{
           "& .MuiDialog-paper": {
             backgroundColor: theme.palette.primary.main,
           },
+          // "& .MuiDialog-paperScrollBody": {
+          //   maxWidth: "-webkit-fill-available !important",
+          //   margin: 0,
+          // },
         }}
       >
         <DialogTitle>Create a channel</DialogTitle>
@@ -195,20 +187,11 @@ export const AddChannel = (props: IProps) => {
             organized around a topic — #marketing, for example.
           </DialogContentText>
 
-          <div className="set-channel-forms" id="add-private-channel">
-            <label className="set-channel-forms__label">Private</label>
-            <Checkbox
-              color="warning"
-              checked={isPrivate}
-              onClick={changeIsPrivate}
-            />
-          </div>
           <TextField
             variant="standard"
             label="Name"
             color="secondary"
-            classes={{ root: popapClasses.input }}
-            sx={{ color: "white" }}
+            sx={{ display: "flex" }}
             name="name"
             required={true}
             helperText={isErrorInPopap ? "required" : ""}
@@ -219,9 +202,9 @@ export const AddChannel = (props: IProps) => {
 
           <TextField
             variant="standard"
-            color="secondary"
             label="Discription"
-            sx={{ display: "flex", margin: "27px 0px 20px" }}
+            color="secondary"
+            sx={{ display: "flex", margin: "0px 0px 16px 0px" }}
             name="discription"
             value={form.discription}
             onChange={changeHandler}
@@ -233,6 +216,19 @@ export const AddChannel = (props: IProps) => {
             isErrorInPopap={isErrorInPopap}
             done={doneCreate}
           />
+
+          <div
+            className="set-channel-forms"
+            style={{ textAlign: "center" }}
+            id="add-private-channel"
+          >
+            <label className="set-channel-forms__label">Private</label>
+            <Checkbox
+              color="error"
+              checked={isPrivate}
+              onClick={changeIsPrivate}
+            />
+          </div>
         </DialogContent>
       </Dialog>
     </div>
