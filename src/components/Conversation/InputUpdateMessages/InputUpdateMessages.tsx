@@ -1,4 +1,11 @@
-import React, { memo, useState, useContext } from "react";
+import React, {
+  memo,
+  useState,
+  useContext,
+  Dispatch,
+  SetStateAction,
+  MutableRefObject,
+} from "react";
 import {
   doc,
   DocumentReference,
@@ -19,12 +26,14 @@ import { ChatContext } from "../../../Context/ChatContext";
 import { Button } from "@mui/material";
 
 interface IProps {
-  changeMessageRef: null | React.MutableRefObject<DocumentData | null>;
+  changeMessageRef: null | MutableRefObject<DocumentData | null>;
   closeBtnChangeMsg: boolean;
-  setCloseBtnChangeMsg: React.Dispatch<React.SetStateAction<boolean>>;
+  inputText: string;
+  setInputText: Dispatch<SetStateAction<string>>;
+  setCloseBtnChangeMsg: Dispatch<SetStateAction<boolean>>;
   closeBtnReplyMsg: boolean;
-  setCloseBtnReplyMsg: React.Dispatch<React.SetStateAction<boolean>>;
-  inputRef: React.MutableRefObject<HTMLInputElement | null>;
+  setCloseBtnReplyMsg: Dispatch<SetStateAction<boolean>>;
+  inputRef: MutableRefObject<HTMLInputElement | null>;
   popupMessage: null | DocumentData;
 }
 
@@ -43,6 +52,8 @@ export const InputUpdateMessages = memo((props: IProps) => {
   const {
     changeMessageRef,
     closeBtnChangeMsg,
+    inputText,
+    setInputText,
     setCloseBtnChangeMsg,
     closeBtnReplyMsg,
     setCloseBtnReplyMsg,
@@ -55,7 +66,6 @@ export const InputUpdateMessages = memo((props: IProps) => {
   const { t } = useTranslation();
   const firestore = useFirestore();
   const classes = useStyles();
-  const [inputText, setInputText] = useState<string>("");
 
   function inputUpdateMessages(event: React.KeyboardEvent<HTMLInputElement>) {
     event.preventDefault();
@@ -67,13 +77,12 @@ export const InputUpdateMessages = memo((props: IProps) => {
   }
 
   function handleSend() {
-    const value = inputRef?.current?.value || "";
+    const value = inputText;
     if (value.trim() !== "") {
       if (closeBtnChangeMsg) changeMessageText(value);
       // else if (closeBtnReplyMsg) messageInReply(value);
       else newMessage(value);
-      if (inputRef?.current?.value && inputText) {
-        inputRef.current.value = "";
+      if (inputText) {
         setInputText("");
       }
       if (closeBtnReplyMsg) {
@@ -194,7 +203,6 @@ export const InputUpdateMessages = memo((props: IProps) => {
   }
 
   function changeInput(event: React.ChangeEvent<HTMLInputElement>) {
-    if (inputRef?.current?.value) inputRef.current.value = event.target.value;
     setInputText(event.target.value);
   }
 
@@ -203,26 +211,17 @@ export const InputUpdateMessages = memo((props: IProps) => {
       className={classes.root}
       style={{
         position: "relative",
-        background: theme.palette.primary.main,
-        borderRadius: "0px 24px 0px 0px",
-        boxShadow:
-          "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.01)",
       }}
       id="mainInput"
     >
       <Grid container spacing={1}>
         <Grid item xs={11}>
           <TextField
-            maxRows={5}
             multiline={true}
+            maxRows={4}
+            style={{ background: theme.palette.secondary.contrastText }}
             inputProps={{
               "data-testid": "on-key-up-main-input",
-              // style: {
-              //   // position: "absolute",
-              //   // bottom: 1,
-              //   // padding: 10,
-              //   // maxLines: "none",
-              // },
             }}
             value={inputText}
             label={t("description.inputMain")}
@@ -259,7 +258,7 @@ export const InputUpdateMessages = memo((props: IProps) => {
               },
             }}
             style={{
-              fontSize: 40,
+              fontSize: 28,
               top: "1rem",
               textAlign: "center",
             }}

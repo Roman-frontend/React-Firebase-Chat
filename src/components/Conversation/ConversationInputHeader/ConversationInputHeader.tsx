@@ -7,13 +7,13 @@ import React, {
 import { useTheme } from "@mui/material/styles";
 import { Box } from "@mui/system";
 import { Grid } from "@mui/material";
-import EndActionButton from "../EndActionButton/EndActionButton.jsx";
+import EndActionButton from "../EndActionButton/EndActionButton";
 import { ChatContext } from "../../../Context/ChatContext";
 import { DocumentData } from "firebase/firestore";
 
 interface IProps {
-  inputRef: MutableRefObject<HTMLInputElement | null>;
   closeBtnReplyMsg: boolean;
+  setInputText: Dispatch<SetStateAction<string>>;
   setCloseBtnReplyMsg: Dispatch<SetStateAction<boolean>>;
   setCloseBtnChangeMsg: Dispatch<SetStateAction<boolean>>;
   popupMessage: null | DocumentData;
@@ -24,12 +24,12 @@ export const ConversationInputHeader = (props: IProps) => {
   const {
     popupMessage,
     closeBtnReplyMsg,
+    setInputText,
     setCloseBtnReplyMsg,
     setCloseBtnChangeMsg,
-    inputRef,
     changeMessageRef,
   } = props;
-  const { authId, allUsers } = useContext(ChatContext);
+  const { allUsers } = useContext(ChatContext);
   const theme = useTheme();
 
   function setName() {
@@ -76,9 +76,9 @@ export const ConversationInputHeader = (props: IProps) => {
         <Grid item xs={1} style={{ padding: 0 }}>
           <EndActionButton
             closeBtnReplyMsg={closeBtnReplyMsg}
+            setInputText={setInputText}
             setCloseBtnReplyMsg={setCloseBtnReplyMsg}
             setCloseBtnChangeMsg={setCloseBtnChangeMsg}
-            inputRef={inputRef}
             changeMessageRef={changeMessageRef}
           />
         </Grid>

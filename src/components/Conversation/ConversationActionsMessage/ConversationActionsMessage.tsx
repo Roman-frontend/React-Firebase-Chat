@@ -29,6 +29,7 @@ import "./conversation-actions-message.sass";
 
 interface IProps {
   inputRef: MutableRefObject<HTMLInputElement | null>;
+  setInputText: Dispatch<SetStateAction<string>>;
   openPopup: string;
   setOpenPopup: Dispatch<SetStateAction<string>>;
   setCloseBtnReplyMsg: Dispatch<SetStateAction<boolean>>;
@@ -46,6 +47,7 @@ const useStyles = makeStyles((theme) => ({
 export function ConversationActionsMessage(props: IProps) {
   const {
     openPopup,
+    setInputText,
     setOpenPopup,
     setCloseBtnReplyMsg,
     inputRef,
@@ -76,9 +78,7 @@ export function ConversationActionsMessage(props: IProps) {
     setOpenPopup("");
     setCloseBtnReplyMsg(true);
     setFocusRootInput(nanoid());
-    if (inputRef?.current) {
-      inputRef.current.value = "";
-    }
+    setInputText("");
   };
 
   const handleChange = () => {
@@ -88,8 +88,8 @@ export function ConversationActionsMessage(props: IProps) {
       changeMessageRef.current = popupMessage;
     }
     setFocusRootInput(nanoid());
-    if (inputRef?.current?.value && popupMessage?.text) {
-      inputRef.current.value = popupMessage?.text;
+    if (popupMessage?.text) {
+      setInputText(popupMessage?.text);
     }
   };
 

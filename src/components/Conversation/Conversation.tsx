@@ -27,6 +27,7 @@ export default function Conversation(props: IProps) {
   const [closeBtnChangeMsg, setCloseBtnChangeMsg] = useState(false);
   const [closeBtnReplyMsg, setCloseBtnReplyMsg] = useState(false);
   const [openPopup, setOpenPopup] = useState("");
+  const [inputText, setInputText] = useState<string>("");
   const inputRef = useRef<HTMLInputElement>(null);
   const changeMessageRef = useRef<null | DocumentData>(null);
 
@@ -71,9 +72,9 @@ export default function Conversation(props: IProps) {
         <ConversationInputHeader
           popupMessage={popupMessage}
           closeBtnReplyMsg={closeBtnReplyMsg}
+          setInputText={setInputText}
           setCloseBtnReplyMsg={setCloseBtnReplyMsg}
           setCloseBtnChangeMsg={setCloseBtnChangeMsg}
-          inputRef={inputRef}
           changeMessageRef={changeMessageRef}
         />
       );
@@ -114,10 +115,11 @@ export default function Conversation(props: IProps) {
       </Box>
       {inputHeader()}
       <ConversationActionsMessage
+        inputRef={inputRef}
         openPopup={openPopup}
         setOpenPopup={setOpenPopup}
         setCloseBtnReplyMsg={setCloseBtnReplyMsg}
-        inputRef={inputRef}
+        setInputText={setInputText}
         setCloseBtnChangeMsg={setCloseBtnChangeMsg}
         changeMessageRef={changeMessageRef}
         popupMessage={popupMessage}
@@ -133,9 +135,11 @@ export default function Conversation(props: IProps) {
       >
         <InputUpdateMessages
           popupMessage={popupMessage}
-          inputRef={inputRef}
           changeMessageRef={changeMessageRef}
           closeBtnChangeMsg={closeBtnChangeMsg}
+          inputRef={inputRef}
+          inputText={inputText}
+          setInputText={setInputText}
           setCloseBtnChangeMsg={setCloseBtnChangeMsg}
           closeBtnReplyMsg={closeBtnReplyMsg}
           setCloseBtnReplyMsg={setCloseBtnReplyMsg}

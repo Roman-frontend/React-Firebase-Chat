@@ -17,7 +17,7 @@ const theme = createTheme({
       light: "#090912",
       dark: "#ffffff",
       main: yellow[100],
-      contrastText: green[100],
+      contrastText: "#5e5e5e",
     },
     error: {
       main: red[500],
